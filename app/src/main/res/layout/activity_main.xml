@@ -6,6 +6,11 @@
     android:orientation="vertical"
     tools:context="xifuyin.tumour.com.a51ehealth.fakevideoview.MainActivity">
 
+    <xifuyin.tumour.com.a51ehealth.fakevideoview.XVideoView
+        android:id="@+id/xvideo_view"
+        android:layout_width="match_parent"
+        android:layout_height="300dp">
 
+    </xifuyin.tumour.com.a51ehealth.fakevideoview.XVideoView>
 
 </LinearLayout>
