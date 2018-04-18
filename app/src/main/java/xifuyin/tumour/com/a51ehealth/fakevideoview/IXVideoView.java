@@ -12,12 +12,16 @@ public interface IXVideoView {
     void start();
 
     /**
-     * 设置视频播放的url
-     *
-     * @param url
+     * 暂停播放的方法
      */
-    void setUrl(String url);
 
+    void Pause();
+
+
+    /**
+     * 重新播放
+     */
+    void restart();
 
     /**
      * 获取办法给总时长，毫秒
@@ -53,6 +57,7 @@ public interface IXVideoView {
 
     boolean isPlaying();
 
+    boolean isPaused();
 
     boolean isCompleted();
 

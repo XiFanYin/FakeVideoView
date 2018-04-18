@@ -1,6 +1,7 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
+import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -34,6 +35,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public LinearLayout bottom;
     public ImageView center_start;
     private ProgressBar progress_bar;
+
 
     public QQBrowserController(@NonNull Context context) {
         super(context);
@@ -84,7 +86,12 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             if (xVideoView.isIdle()) { //判断是否是播放未开始
                 xVideoView.start();//调用自定义播放器的开始方法
+            } else if (xVideoView.isPlaying()) {
+                xVideoView.Pause();
+            } else if (xVideoView.isPaused() || xVideoView.isCompleted()) {
+                xVideoView.restart();
             }
+
         } else if (v == back) {//返回按钮被点击
 
             Toast.makeText(mContext, "返回按钮被点击", Toast.LENGTH_SHORT).show();
@@ -115,7 +122,8 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         } else if (v == this) {//整个控制器被点击
 
-            Toast.makeText(mContext, "整个控制器被点击", Toast.LENGTH_SHORT).show();
+            setTopBottomVisible(topBottomVisible, false);
+
         }
 
 
@@ -127,6 +135,8 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         switch (state) {
 
             case Constants.STATE_IDLE://默认状态
+                Bitmap videoThumbnail = Utils.getVideoThumbnail(url);
+                cover.setImageBitmap(videoThumbnail);
                 cover.setVisibility(VISIBLE);
                 center_start.setVisibility(VISIBLE);
 
@@ -140,15 +150,20 @@ public class QQBrowserController extends BaseController implements View.OnClickL
             case Constants.STATE_PREPARED://播放器准备就绪，准备播放
                 progress_bar.setVisibility(GONE);
 
-                startUpdateProgressTimer();//开启定时器，会调用更新进度
-
                 break;
 
             case Constants.STATE_PLAYING://播放器正在播放
-                top.setVisibility(VISIBLE);
-                bottom.setVisibility(VISIBLE);
-                lock.setVisibility(VISIBLE);
 
+                center_start.setImageResource(R.drawable.video_mid_play_fullscreen);
+                center_start.setVisibility(GONE);
+                startUpdateProgressTimer();//开启定时器，会调用更新进度
+                break;
+
+
+            case Constants.STATE_PAUSED://用户点击了暂停按钮
+
+                center_start.setImageResource(R.drawable.video_mid_pause_fullscreen);
+                cancelUpdateProgressTimer();//取消更新进度的方法，否则视频播放完成，更新进度的定时器还是会走，浪费cpu,这个是父类的方法
                 break;
 
 
@@ -161,6 +176,31 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         }
 
+    }
+
+
+    /**
+     * 设置top、bottom控制器显示和隐藏
+     *
+     * @param visible
+     */
+
+    @Override
+    public void setTopBottomVisible(boolean visible, boolean centerAutoVisible) {
+
+        if (xVideoView.isPlaying() || xVideoView.isCompleted() || xVideoView.isPaused()) {
+            top.setVisibility(visible ? View.GONE : View.VISIBLE);
+            bottom.setVisibility(visible ? View.GONE : View.VISIBLE);
+            center_start.setVisibility(centerAutoVisible ? (xVideoView.isPaused() ? (View.VISIBLE) : (View.GONE)) : (visible ? View.GONE : View.VISIBLE));
+        }
+
+        if (visible) {
+            cancelDismissTopBottomTimer();
+        } else {
+            startDismissTopBottomTimer();
+        }
+
+        topBottomVisible = !visible;
     }
 
 
@@ -181,7 +221,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         int progress = (int) (100 * currentPosition / durationPosition);//计算进度百分比，转换层int，因为下边接受的就是int类型的值
         seek.setProgress(progress);//设置进度条
         seek.setSecondaryProgress(bufferPercentage);//设置缓存百分比
-        Log.e("rrrrrrrrrrrrr", bufferPercentage + "tttttttttttttttt");
 
     }
 

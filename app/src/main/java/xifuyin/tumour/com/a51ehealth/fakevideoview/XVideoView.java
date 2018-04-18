@@ -27,7 +27,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private Context mContext;//上下文
     private FrameLayout mContainer;//容器
     private BaseController mController;//控制器布局
-    private String url;//播放视频的url
     private int mCurrentState = Constants.STATE_IDLE;//记录播放器状态
     private IjkMediaPlayer mediaPlayer;
     private SurfaceTexture mSurfaceTexture;
@@ -64,15 +63,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         this.addView(mController, params);
     }
 
-    /**
-     * 设置视频的url
-     *
-     * @param url
-     */
-    @Override
-    public void setUrl(String url) {
-        this.url = url;
-    }
 
     //用户点击控制器播放按钮时候调用的方法
     @Override
@@ -83,6 +73,22 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         initTextureView();
         //添加TextureView到容器中
         addTextureView();
+    }
+
+    //用户暂停的方法
+    @Override
+    public void Pause() {
+        mediaPlayer.pause();
+        mCurrentState = Constants.STATE_PAUSED;
+        mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
+    }
+
+    //用户由于暂停，从新点击播放的时候调用
+    @Override
+    public void restart() {
+        mediaPlayer.start();
+        mCurrentState = Constants.STATE_PLAYING;
+        mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
     }
 
     //返回视频的总长度
@@ -148,6 +154,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         } else {
             mTextureView.setSurfaceTexture(mSurfaceTexture);
         }
+
     }
 
     @Override
@@ -177,7 +184,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         Surface surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);//设置视频流
         try {
-            mediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(url));//设置视频播放地址
+            mediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(mController.getUrl()));//设置视频播放地址
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -275,6 +282,12 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public boolean isPlaying() {
         return mCurrentState == Constants.STATE_PLAYING;
+    }
+
+    //播放器被用户点击了暂停
+    @Override
+    public boolean isPaused() {
+        return mCurrentState == Constants.STATE_PAUSED;
     }
 
     //播放器播放视频完成

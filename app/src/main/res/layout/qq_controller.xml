@@ -7,8 +7,7 @@
         android:id="@+id/cover"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@drawable/fbb"
-        android:scaleType="centerInside"
+        android:scaleType="centerCrop"
         android:visibility="gone" />
 
     <!--顶部控制区-->
@@ -26,7 +25,8 @@
             android:id="@+id/back"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/video_back" />
+            android:src="@drawable/video_back"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/title"
@@ -37,13 +37,15 @@
             android:maxLines="2"
             android:text="真实死亡游戏“蓝鲸”疑似进入国内"
             android:textColor="@android:color/white"
-            android:textSize="14sp" />
+            android:textSize="14sp"
+            android:visibility="invisible" />
 
         <ImageView
             android:id="@+id/share"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/video_share_btn" />
+            android:src="@drawable/video_share_btn"
+            android:visibility="gone" />
 
         <ImageView
             android:id="@+id/tiny_window"
@@ -57,7 +59,8 @@
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:layout_marginLeft="10dp"
-            android:src="@drawable/video_menu_btn_fg" />
+            android:src="@drawable/video_menu_btn_fg"
+            android:visibility="gone" />
     </LinearLayout>
 
     <!--锁-->
@@ -86,7 +89,8 @@
             android:id="@+id/restart_or_pause"
             android:layout_width="24dp"
             android:layout_height="24dp"
-            android:src="@drawable/video_pause_wide" />
+            android:src="@drawable/video_pause_wide"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/position"

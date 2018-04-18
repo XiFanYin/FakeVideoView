@@ -12,10 +12,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         xvideo_view = findViewById(R.id.xvideo_view);
-        xvideo_view.setUrl("http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4");
         QQBrowserController controller = new QQBrowserController(this);
+        controller.setUrl("http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4");
         xvideo_view.setController(controller);
     }
 }

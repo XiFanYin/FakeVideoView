@@ -1,7 +1,9 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
+import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
 import android.widget.FrameLayout;
@@ -20,6 +22,9 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     public IXVideoView xVideoView;//播放器对象
     private Timer mUpdateProgressTimer;
     private TimerTask mUpdateProgressTimerTask;
+    private CountDownTimer mDismissTopBottomCountDownTimer;
+    public boolean topBottomVisible = false;//顶部和底部默认不显示
+    public String url;
 
     public BaseController(@NonNull Context context) {
         super(context);
@@ -49,6 +54,7 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     public abstract void onPlayStateChanged(int state);
 
 //===============================================和进度有关的逻辑======================================================
+
     /**
      * 开启更新进度的计时器。
      */
@@ -85,8 +91,78 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
             mUpdateProgressTimerTask = null;
         }
     }
+
     /**
-     *   这里更新进度的抽象方法，之所以抽象1，父类中可以调用，2，规范方法名字
+     * 这里更新进度的抽象方法，之所以抽象1，父类中可以调用，2，规范方法名字
      */
     protected abstract void updateProgress();
+
+
+//============================================和控制器的显示隐藏有关的定时器===============================================
+
+    /**
+     * 开启top、bottom自动消失的timer
+     */
+    protected void startDismissTopBottomTimer() {
+        cancelDismissTopBottomTimer();
+        if (mDismissTopBottomCountDownTimer == null) {
+            mDismissTopBottomCountDownTimer = new CountDownTimer(5000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+
+                    setTopBottomVisible(topBottomVisible, true);
+
+                }
+            };
+        }
+        mDismissTopBottomCountDownTimer.start();
+    }
+
+    /**
+     * 取消top、bottom自动消失的timer
+     */
+    protected void cancelDismissTopBottomTimer() {
+        if (mDismissTopBottomCountDownTimer != null) {
+            mDismissTopBottomCountDownTimer.cancel();
+        }
+    }
+
+    /**
+     * 顶部和底部控制器显示和隐藏抽象方法
+     *
+     * @param visible
+     */
+    abstract void setTopBottomVisible(boolean visible, boolean centerAutoVisible);
+
+
+    //===================================和url有关的=============================================
+
+    /**
+     * 设置视频播放的url
+     *
+     * @param url
+     */
+    public void setUrl(String url) {
+
+        this.url = url;
+    }
+
+    ;
+
+    /**
+     * 获取视频播放的url
+     */
+    public String getUrl() {
+
+        return url;
+    }
+
+    ;
+
+
 }

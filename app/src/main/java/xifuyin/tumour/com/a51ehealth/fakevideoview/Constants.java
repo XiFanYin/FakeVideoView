@@ -27,7 +27,10 @@ public class Constants {
     public static final int STATE_PLAYING = 3;
 
 
-
+    /**
+     * 暂停播放
+     **/
+    public static final int STATE_PAUSED = 4;
 
     /**
      * 播放完成
