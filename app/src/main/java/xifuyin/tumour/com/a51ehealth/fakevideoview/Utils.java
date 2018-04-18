@@ -2,6 +2,7 @@ package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.util.Log;
 
 import java.util.Formatter;
 import java.util.HashMap;
@@ -55,6 +56,8 @@ public class Utils {
             bitmap = retriever.getFrameAtTime();
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
+
+            Log.e("rrrrrrrrrrrrr","rrrrrrrrrrrr2");
         } finally {
             retriever.release();
         }
