@@ -5,8 +5,8 @@
         <shape android:shape="oval">
             <solid android:color="#ffffff" />
             <size
-                android:width="16dp"
-                android:height="16dp" />
+                android:width="8dp"
+                android:height="8dp" />
         </shape>
     </item>
     <item

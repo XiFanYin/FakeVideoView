@@ -25,4 +25,12 @@ public class Constants {
      * 正在播放
      **/
     public static final int STATE_PLAYING = 3;
+
+
+
+
+    /**
+     * 播放完成
+     **/
+    public static final int STATE_COMPLETED = 7;
 }

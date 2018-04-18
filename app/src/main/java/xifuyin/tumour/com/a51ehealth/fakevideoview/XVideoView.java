@@ -7,7 +7,6 @@ import android.net.Uri;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Surface;
 import android.view.TextureView;
@@ -33,6 +32,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private IjkMediaPlayer mediaPlayer;
     private SurfaceTexture mSurfaceTexture;
     private XTextureView mTextureView;
+    private int BufferPercentage;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -74,7 +74,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         this.url = url;
     }
 
-
     //用户点击控制器播放按钮时候调用的方法
     @Override
     public void start() {
@@ -85,6 +84,29 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         //添加TextureView到容器中
         addTextureView();
     }
+
+    //返回视频的总长度
+    @Override
+    public long getDuration() {
+        return mediaPlayer.getDuration();
+    }
+
+    //返回视频播放的当前进度
+    @Override
+    public long getCurrentPosition() {
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    @Override
+    public void seekTo(long touchProgress) {
+        mediaPlayer.seekTo(touchProgress);
+    }
+
+    @Override
+    public int getBufferPercentage() {
+        return BufferPercentage;
+    }
+
 
     //初始化播放器
     private void initMediaPlayer() {
@@ -149,6 +171,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         mediaPlayer.setOnPreparedListener(onPrepared());//设置准备完成监听
         mediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChanged());//当视频大小改变的时候
         mediaPlayer.setOnInfoListener(onInfo());//视频加载信息监听回调
+        mediaPlayer.setOnCompletionListener(onCompletion());//视频完成播放时候监听
+        mediaPlayer.setOnBufferingUpdateListener(onBufferingUpdate());//视频缓存信息监听,显示在底部进度条的第二图层中
         //创建Surface对象，让mediaPlayer通过Surface 和mSurfaceTexture与TextureView关联起来
         Surface surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);//设置视频流
@@ -166,7 +190,16 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
 
     //==========================MediaPlayer的监听回调====================================================
+    @NonNull//视频加载进度的监听，体现在seekbar的第二进度
+    private IMediaPlayer.OnBufferingUpdateListener onBufferingUpdate() {
+        return new IMediaPlayer.OnBufferingUpdateListener() {
+            @Override
+            public void onBufferingUpdate(IMediaPlayer iMediaPlayer, int i) {
 
+                BufferPercentage = i;//更新加载进度
+            }
+        };
+    }
 
     @NonNull//视频准备完成之后调用
     private IMediaPlayer.OnPreparedListener onPrepared() {
@@ -191,6 +224,18 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         };
     }
 
+    @NonNull//播放完成回调
+    private IMediaPlayer.OnCompletionListener onCompletion() {
+        return new IMediaPlayer.OnCompletionListener() {
+            @Override
+            public void onCompletion(IMediaPlayer iMediaPlayer) {
+
+                mCurrentState = Constants.STATE_COMPLETED;//播放完成
+                mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
+
+            }
+        };
+    }
 
     @NonNull
     private IMediaPlayer.OnInfoListener onInfo() {
@@ -225,10 +270,17 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     public boolean isPreparing() {
         return mCurrentState == Constants.STATE_PREPARING;
     }
+
     //播放器正在播放中
     @Override
     public boolean isPlaying() {
         return mCurrentState == Constants.STATE_PLAYING;
+    }
+
+    //播放器播放视频完成
+    @Override
+    public boolean isCompleted() {
+        return mCurrentState == Constants.STATE_COMPLETED;
     }
 
 
