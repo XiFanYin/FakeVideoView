@@ -49,6 +49,12 @@ public interface IXVideoView {
     int getBufferPercentage();
 
 
+    /**
+     * 进入悬浮窗
+     */
+
+    void enterFloatWindow();
+
     //===============================播放器状态=================================
 
     boolean isIdle();

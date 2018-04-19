@@ -102,7 +102,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         } else if (v == tiny_window) {//小屏按钮被点击
 
-            Toast.makeText(mContext, "小屏按钮被点击", Toast.LENGTH_SHORT).show();
+            xVideoView.enterFloatWindow();
 
         } else if (v == menu) {//菜单被点击
 

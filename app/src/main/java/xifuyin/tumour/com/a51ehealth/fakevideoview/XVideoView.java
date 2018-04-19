@@ -1,9 +1,12 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
+import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
 import android.net.Uri;
+import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
@@ -11,6 +14,7 @@ import android.view.Gravity;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import java.io.IOException;
@@ -32,6 +36,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private SurfaceTexture mSurfaceTexture;
     private XTextureView mTextureView;
     private int BufferPercentage;
+    private WindowManager mWindowManager;
+    private WindowManager.LayoutParams mLayoutParams;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -61,87 +67,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         //把控制器布局添加到播放器中
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         this.addView(mController, params);
-    }
-
-
-    //用户点击控制器播放按钮时候调用的方法
-    @Override
-    public void start() {
-        //初始化播放器
-        initMediaPlayer();
-        //初始化TextTureView控件
-        initTextureView();
-        //添加TextureView到容器中
-        addTextureView();
-    }
-
-    //用户暂停的方法
-    @Override
-    public void Pause() {
-        mediaPlayer.pause();
-        mCurrentState = Constants.STATE_PAUSED;
-        mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
-    }
-
-    //用户由于暂停，从新点击播放的时候调用
-    @Override
-    public void restart() {
-        mediaPlayer.start();
-        mCurrentState = Constants.STATE_PLAYING;
-        mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
-    }
-
-    //返回视频的总长度
-    @Override
-    public long getDuration() {
-        return mediaPlayer.getDuration();
-    }
-
-    //返回视频播放的当前进度
-    @Override
-    public long getCurrentPosition() {
-        return mediaPlayer.getCurrentPosition();
-    }
-
-    @Override
-    public void seekTo(long touchProgress) {
-        mediaPlayer.seekTo(touchProgress);
-    }
-
-    @Override
-    public int getBufferPercentage() {
-        return BufferPercentage;
-    }
-
-
-    //初始化播放器
-    private void initMediaPlayer() {
-
-        if (mediaPlayer == null) {
-            mediaPlayer = new IjkMediaPlayer();
-        }
-    }
-
-    //初始化TextureView，并设置创建SurfaceTexture完成监听
-    private void initTextureView() {
-
-        if (mTextureView == null) {
-            mTextureView = new XTextureView(mContext);
-            mTextureView.setSurfaceTextureListener(this);
-        }
-
-    }
-
-    /**
-     * 添加TextureView到容器中
-     */
-    private void addTextureView() {
-        mContainer.removeView(mTextureView);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                Gravity.CENTER);
-        mContainer.addView(mTextureView, 0, params);
     }
 
 
@@ -294,6 +219,145 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public boolean isCompleted() {
         return mCurrentState == Constants.STATE_COMPLETED;
+    }
+
+
+    //=====================================播放器控给控制器提供的逻辑方法=======================================
+
+
+    //用户点击控制器播放按钮时候调用的方法
+    @Override
+    public void start() {
+        //初始化播放器
+        initMediaPlayer();
+        //初始化TextTureView控件
+        initTextureView();
+        //添加TextureView到容器中
+        addTextureView();
+    }
+
+    //初始化播放器
+    private void initMediaPlayer() {
+
+        if (mediaPlayer == null) {
+            mediaPlayer = new IjkMediaPlayer();
+        }
+    }
+
+    //初始化TextureView，并设置创建SurfaceTexture完成监听
+    private void initTextureView() {
+
+        if (mTextureView == null) {
+            mTextureView = new XTextureView(mContext);
+            mTextureView.setSurfaceTextureListener(this);
+        }
+
+    }
+
+    /**
+     * 添加TextureView到容器中
+     */
+    private void addTextureView() {
+        mContainer.removeView(mTextureView);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        mContainer.addView(mTextureView, 0, params);
+    }
+
+    //用户暂停的方法
+    @Override
+    public void Pause() {
+        mediaPlayer.pause();
+        mCurrentState = Constants.STATE_PAUSED;
+        mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
+    }
+
+    //用户由于暂停，从新点击播放的时候调用
+    @Override
+    public void restart() {
+        mediaPlayer.start();
+        mCurrentState = Constants.STATE_PLAYING;
+        mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
+    }
+
+    //返回视频的总长度
+    @Override
+    public long getDuration() {
+        return mediaPlayer.getDuration();
+    }
+
+    //返回视频播放的当前进度
+    @Override
+    public long getCurrentPosition() {
+        return mediaPlayer.getCurrentPosition();
+    }
+
+    //视频移动到指定位置进行播放
+    @Override
+    public void seekTo(long touchProgress) {
+        mediaPlayer.seekTo(touchProgress);
+    }
+
+    //获取视频缓存进度
+    @Override
+    public int getBufferPercentage() {
+        return BufferPercentage;
+    }
+
+    //视频进入悬浮窗模式
+    @Override
+    public void enterFloatWindow() {
+
+        permission();
+    }
+
+
+    /**
+     * 需要去根据手机系统版本去申请权限，这里分6.0之后和6.0之前，6.0之前适配慢慢来
+     */
+    public void permission() {
+        if (Build.VERSION.SDK_INT >= 23) {//如果手机版本大于6.0
+
+            if (Utils.hasPermission(mContext)) {//如果已经授予这个权限
+
+                createWindowManager();
+
+            } else {//没有授予这个权限，就去申请这个权限
+
+                Intent intent = new Intent("android.settings.action.MANAGE_OVERLAY_PERMISSION");
+                intent.setData(Uri.parse("package:" + mContext.getPackageName()));
+                mContext.startActivity(intent);
+
+            }
+
+
+        } else {
+            createWindowManager();
+        }
+    }
+
+    /**
+     * 设置WindowManager
+     */
+    private void createWindowManager() {
+
+        FloatWindow
+                .getInstance(mContext)
+                .setType(WindowManager.LayoutParams.TYPE_PHONE) // 设置窗体显示类型——TYPE_SYSTEM_ALERT(系统提示)
+                .setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)  // FLAG_NOT_FOCUSABLE(不能获得按键输入焦点)
+                .setFormat(PixelFormat.RGBA_8888)
+                .setGravity(Gravity.TOP| Gravity.LEFT)
+                .setWidth(WindowManager.LayoutParams.WRAP_CONTENT)
+                .setHeight(WindowManager.LayoutParams.WRAP_CONTENT)
+                .setX(0)
+                .setY(100)
+                .addView(mTextureView)
+                .show();
+
+
+
     }
 
 

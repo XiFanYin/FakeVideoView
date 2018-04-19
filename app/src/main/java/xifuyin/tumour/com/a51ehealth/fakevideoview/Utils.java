@@ -1,9 +1,12 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
+import android.provider.Settings;
 import android.util.Log;
 
+import java.lang.reflect.Method;
 import java.util.Formatter;
 import java.util.HashMap;
 import java.util.Locale;
@@ -63,4 +66,24 @@ public class Utils {
         }
         return bitmap;
     }
+
+
+    /**
+     * 悬浮窗权限问题
+     * @param context
+     * @return
+     */
+    public static boolean hasPermission(Context context) {
+        //通过反射调用canDrawOverlays方法，获取用户是否已经授予当前app这个权限
+        Boolean result;
+        try {
+            Class clazz = Settings.class;
+            Method canDrawOverlays = clazz.getDeclaredMethod("canDrawOverlays", Context.class);
+            result = (Boolean) canDrawOverlays.invoke(null, context);
+        } catch (Exception e) {
+            result = false;
+        }
+        return result;
+    }
+
 }
