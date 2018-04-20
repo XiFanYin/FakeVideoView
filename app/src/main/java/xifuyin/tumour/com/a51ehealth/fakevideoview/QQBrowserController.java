@@ -179,6 +179,32 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
     }
 
+    //根据播放器的显示模式去更新控制器Ui的显示
+    @Override
+    public void onPlayModeChanged(int Mode) {
+        switch (Mode) {
+
+            case Constants.MODE_NORMAL://播放器在默认模式下
+
+                setVisibility(VISIBLE);
+
+                break;
+
+            case Constants.MODE_TINY_WINDOW://播放器在Tiny模式下
+
+                setVisibility(GONE);
+
+                break;
+
+            case Constants.MODE_FULL_SCREEN://播放器在全屏模式下
+
+
+                break;
+
+        }
+
+    }
+
 
     /**
      * 设置top、bottom控制器显示和隐藏

@@ -10,7 +10,6 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.Gravity;
 import android.view.Surface;
 import android.view.TextureView;
@@ -339,7 +338,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
             if (Utils.hasPermission(mContext)) {//如果已经授予这个权限
 
-                createWindowManager();
+                createTinyWindow();
 
             } else {//没有授予这个权限，就去申请这个权限
 
@@ -349,43 +348,57 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
             }
 
-
         } else {
-            createWindowManager();
+            createTinyWindow();
         }
     }
 
     /**
-     * 设置WindowManager
+     * 显示小窗口
      */
-    private void createWindowManager() {
-        //这里让控制器隐藏
-        mController.setVisibility(GONE);
+    private void createTinyWindow() {
+
+        //改变模式，更新Ui
+        mCurrentMode = Constants.MODE_TINY_WINDOW;
+        mController.onPlayModeChanged(mCurrentMode);
+
         FloatWindow
-                .getInstance(mContext)
+                .getInstance(mContext.getApplicationContext())
                 .setType(WindowManager.LayoutParams.TYPE_PHONE) // 设置窗体显示类型——TYPE_SYSTEM_ALERT(系统提示)
                 .setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)  // FLAG_NOT_FOCUSABLE(不能获得按键输入焦点)
                 .setFormat(PixelFormat.RGBA_8888)
                 .addView(mTextureView)
-                .setOnClickListener(new FloatWindow.OnClickListener() {
-                    @Override
-                    public void OnClick() {
-                        //移除小窗
-                        FloatWindow.getInstance(mContext).dismass();
-                        //把之前的mTextureView设置为null
-                        mTextureView = null;
-                        //这里一定要从新初始化一个TextureView，因为之前的TextureView回走销毁方法，至于为什么现在还不知道
-                        initTextureView();
-                        addTextureView();
-                        //这里让控制器显示
-                        mController.setVisibility(VISIBLE);
-
-
-                    }
-                })
                 .show();
 
+
+        TinyWindowListener();
+
+    }
+
+    /**
+     * 设置小窗口点击事件的监听
+     */
+    private void TinyWindowListener() {
+        FloatWindow
+                .getInstance(mContext.getApplicationContext())
+                .setOnClickListener(new FloatWindow.OnClickListener() {
+                    @Override
+                    public void onTinyClick() {
+
+                    }
+
+                    @Override
+                    public void onCloseClick() {
+                        mCurrentMode = Constants.MODE_NORMAL;
+                        mController.onPlayModeChanged(mCurrentMode);
+                        FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
+                        mTextureView = null;
+                        initTextureView();
+                        addTextureView();
+
+                    }
+                });
 
     }
 

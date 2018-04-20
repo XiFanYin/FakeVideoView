@@ -4,10 +4,13 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
+import android.view.LayoutInflater;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
 
 /**
  * Created by Administrator on 2018/4/19.
@@ -20,8 +23,9 @@ public class FloatWindow {
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mLayoutParams;
     private static FloatWindow mInstance;
-    private View View;
+    private FrameLayout newContainer;
     private OnClickListener onClickListener;
+    private ViewGroup xVideoView;
 
 
     /**
@@ -96,11 +100,41 @@ public class FloatWindow {
     }
 
 
-    public FloatWindow addView(View mContainer) {
-        this.View = mContainer;
+    public FloatWindow addView(View TextureView) {
 
-        ViewGroup View = (ViewGroup) mContainer.getParent();
-        View.removeViewAt(0);
+        xVideoView = (ViewGroup) TextureView.getParent();
+        xVideoView.removeView(TextureView);
+
+
+        newContainer = new FrameLayout(applicationContext);
+
+
+        //添加右下角标致
+        ImageView zoom_hint = new ImageView(applicationContext);
+        zoom_hint.setImageResource(R.drawable.video_zoom_hint);
+        FrameLayout.LayoutParams zoom_Hint_Params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        zoom_Hint_Params.gravity = Gravity.BOTTOM | Gravity.END;
+        newContainer.addView(zoom_hint, zoom_Hint_Params);
+
+        //添加关闭按钮
+        ImageView close = new ImageView(applicationContext);
+        close.setImageResource(R.drawable.video_small_window_close);
+        FrameLayout.LayoutParams close_Params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        newContainer.addView(close, close_Params);
+
+        close.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (onClickListener != null) {
+                    //调用外部传递过来的方法，表示关闭窗口被点击
+                    onClickListener.onCloseClick();
+                }
+            }
+        });
+
+
+        newContainer.addView(TextureView, 0);
+
 
         addOnTouch();
 
@@ -113,7 +147,7 @@ public class FloatWindow {
 
     private void addOnTouch() {
 
-        View.setOnTouchListener(new View.OnTouchListener() {
+        newContainer.setOnTouchListener(new View.OnTouchListener() {
             float downX = 0;
             float downY = 0;
             int oddOffsetX = 0;
@@ -134,8 +168,8 @@ public class FloatWindow {
                         float moveY = -event.getY();
                         mLayoutParams.x += (moveX - downX) / 6;
                         mLayoutParams.y += (moveY - downY) / 6;
-                        if (View != null) {
-                            mWindowManager.updateViewLayout(View, mLayoutParams);
+                        if (newContainer != null) {
+                            mWindowManager.updateViewLayout(newContainer, mLayoutParams);
                         }
 
                         break;
@@ -144,8 +178,8 @@ public class FloatWindow {
                         int newOffsetY = mLayoutParams.y;
                         if (Math.abs(newOffsetX - oddOffsetX) <= 20 && Math.abs(newOffsetY - oddOffsetY) <= 20) {//如果抬起来的时候位置小于20，认为用户是点击事件
                             if (onClickListener != null) {
-                                //调用外部传递过来的方法
-                                onClickListener.OnClick();
+                                //调用外部传递过来的方法，表示整个窗口被点击调用
+                                onClickListener.onTinyClick();
                             }
                         }
                         break;
@@ -161,7 +195,7 @@ public class FloatWindow {
      */
     public void show() {
 
-        mWindowManager.addView(View, mLayoutParams);
+        mWindowManager.addView(newContainer, mLayoutParams);
 
     }
 
@@ -170,7 +204,7 @@ public class FloatWindow {
      */
     public void dismass() {
 
-        mWindowManager.removeView(View);
+        mWindowManager.removeView(newContainer);
 
     }
 
@@ -180,11 +214,10 @@ public class FloatWindow {
      *
      * @return
      */
-    public FloatWindow setOnClickListener(OnClickListener onClickListener) {
+    public void setOnClickListener(OnClickListener onClickListener) {
 
         this.onClickListener = onClickListener;
 
-        return mInstance;
     }
 
     /**
@@ -192,7 +225,14 @@ public class FloatWindow {
      */
 
     interface OnClickListener {
+        //整个小窗被点击
+        void onTinyClick();
 
-        void OnClick();
+        //关闭小窗口按钮被点击
+        void onCloseClick();
+
     }
+
+
+
 }

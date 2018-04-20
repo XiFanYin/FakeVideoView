@@ -53,6 +53,10 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     //根据播放器的状态去更新控制器Ui的显示
     public abstract void onPlayStateChanged(int state);
 
+
+    //根据播放器的显示模式去更新控制器Ui的显示
+    public abstract void  onPlayModeChanged(int Mode);
+
 //===============================================和进度有关的逻辑======================================================
 
     /**
