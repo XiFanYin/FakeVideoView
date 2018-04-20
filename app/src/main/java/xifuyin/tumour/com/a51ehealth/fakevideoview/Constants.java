@@ -36,4 +36,21 @@ public class Constants {
      * 播放完成
      **/
     public static final int STATE_COMPLETED = 7;
+
+
+
+
+    /**
+     * 普通模式
+     **/
+    public static final int MODE_NORMAL = 10;
+    /**
+     * 全屏模式
+     **/
+    public static final int MODE_FULL_SCREEN = 11;
+    /**
+     * 小窗口模式
+     **/
+    public static final int MODE_TINY_WINDOW = 12;
+
 }

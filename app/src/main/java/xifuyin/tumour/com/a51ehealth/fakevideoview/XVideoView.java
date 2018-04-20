@@ -37,7 +37,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private SurfaceTexture mSurfaceTexture;
     private XTextureView mTextureView;
     private int BufferPercentage;
-
+    private int mCurrentMode = Constants.MODE_NORMAL;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -131,7 +131,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
 
-        return mTextureView==null;
+        return mTextureView == null;
     }
 
     @Override
@@ -261,6 +261,21 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public boolean isCompleted() {
         return mCurrentState == Constants.STATE_COMPLETED;
+    }
+
+    @Override
+    public boolean isFullScreen() {
+        return mCurrentMode == Constants.MODE_FULL_SCREEN;
+    }
+
+    @Override
+    public boolean isTinyWindow() {
+        return mCurrentMode == Constants.MODE_TINY_WINDOW;
+    }
+
+    @Override
+    public boolean isNormal() {
+        return mCurrentMode == Constants.MODE_NORMAL;
     }
 
 

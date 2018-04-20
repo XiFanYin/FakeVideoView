@@ -68,4 +68,12 @@ public interface IXVideoView {
     boolean isCompleted();
 
 
+
+//=====================================播放器显示的模式===========================================
+
+
+    boolean isFullScreen();
+    boolean isTinyWindow();
+    boolean isNormal();
+
 }
