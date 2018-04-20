@@ -1,6 +1,9 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
+import android.util.DisplayMetrics;
+import android.util.Log;
+import android.view.Gravity;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,10 +16,12 @@ import android.view.WindowManager;
 
 public class FloatWindow {
 
+    private Context applicationContext;
     private WindowManager mWindowManager;
     private WindowManager.LayoutParams mLayoutParams;
     private static FloatWindow mInstance;
-    private XTextureView View;
+    private View View;
+    private OnClickListener onClickListener;
 
 
     /**
@@ -36,11 +41,21 @@ public class FloatWindow {
 
     //构造方法
     private FloatWindow(Context applicationContext) {
+
+        this.applicationContext = applicationContext;
         // 获取系统窗体管理类
         mWindowManager = (WindowManager) applicationContext.getApplicationContext().getSystemService(Context.WINDOW_SERVICE);
+        //获取屏幕的宽和高
+        DisplayMetrics dm = new DisplayMetrics();
+        mWindowManager.getDefaultDisplay().getMetrics(dm);
+        int width = dm.widthPixels;         // 屏幕宽度（像素）
         // 获取描述窗口的管理策略类
         mLayoutParams = new WindowManager.LayoutParams();
+        //为了统一远点坐标，我们这里设置为左边，上边
+        mLayoutParams.gravity = Gravity.BOTTOM | Gravity.RIGHT;
 
+        mLayoutParams.width = width / 2;
+        mLayoutParams.height = width * 9 / 32;
     }
 
     /**
@@ -80,56 +95,21 @@ public class FloatWindow {
         return mInstance;
     }
 
-    /**
-     * 设置显示位置
-     *
-     * @param layoutParamsGravity
-     * @return
-     */
 
-    public FloatWindow setGravity(int layoutParamsGravity) {
+    public FloatWindow addView(View mContainer) {
+        this.View = mContainer;
 
-        mLayoutParams.gravity = layoutParamsGravity;
-        return mInstance;
-    }
-
-
-    public FloatWindow setWidth(int layoutParamsWidth) {
-
-        mLayoutParams.width = layoutParamsWidth;
-
-        return mInstance;
-    }
-
-
-    public FloatWindow setHeight(int layoutParamsHeight) {
-
-        mLayoutParams.height = layoutParamsHeight;
-        return mInstance;
-    }
-
-    public FloatWindow setX(int x) {
-        mLayoutParams.x = x;
-        return mInstance;
-    }
-
-    public FloatWindow setY(int y) {
-        mLayoutParams.y = y;
-        return mInstance;
-    }
-
-    public FloatWindow addView(XTextureView mTextureView) {
-        this.View = mTextureView;
-
-        ViewGroup View = (ViewGroup) mTextureView.getParent();
-        if (View != null) {
-            View.removeAllViews();
-        }
+        ViewGroup View = (ViewGroup) mContainer.getParent();
+        View.removeViewAt(0);
 
         addOnTouch();
 
         return mInstance;
     }
+
+    /**
+     * 拖动事件，注意原点坐标的变换
+     */
 
     private void addOnTouch() {
 
@@ -138,28 +118,36 @@ public class FloatWindow {
             float downY = 0;
             int oddOffsetX = 0;
             int oddOffsetY = 0;
+
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                switch(event.getAction()){
+                switch (event.getAction()) {
                     case MotionEvent.ACTION_DOWN:
-                        downX =  event.getX();
-                        downY =  event.getY();
+                        downX = -event.getX();
+                        downY = -event.getY();
                         oddOffsetX = mLayoutParams.x;
                         oddOffsetY = mLayoutParams.y;
+
                         break;
                     case MotionEvent.ACTION_MOVE:
-                        float moveX = event.getX();
-                        float moveY =  event.getY();
-                        //不除以3，拖动的view抖动的有点厉害
-                        mLayoutParams.x += (moveX - downX)/3;
-                        mLayoutParams.y += (moveY - downY)/3;
-                        if(View != null){
-                            mWindowManager.updateViewLayout(View,mLayoutParams);
+                        float moveX = -event.getX();
+                        float moveY = -event.getY();
+                        mLayoutParams.x += (moveX - downX) / 6;
+                        mLayoutParams.y += (moveY - downY) / 6;
+                        if (View != null) {
+                            mWindowManager.updateViewLayout(View, mLayoutParams);
                         }
 
                         break;
                     case MotionEvent.ACTION_UP:
-
+                        int newOffsetX = mLayoutParams.x;
+                        int newOffsetY = mLayoutParams.y;
+                        if (Math.abs(newOffsetX - oddOffsetX) <= 20 && Math.abs(newOffsetY - oddOffsetY) <= 20) {//如果抬起来的时候位置小于20，认为用户是点击事件
+                            if (onClickListener != null) {
+                                //调用外部传递过来的方法
+                                onClickListener.OnClick();
+                            }
+                        }
                         break;
                 }
                 return true;
@@ -168,9 +156,43 @@ public class FloatWindow {
         });
     }
 
-
+    /**
+     * 显示悬浮窗
+     */
     public void show() {
 
         mWindowManager.addView(View, mLayoutParams);
+
+    }
+
+    /**
+     * 移除悬浮窗
+     */
+    public void dismass() {
+
+        mWindowManager.removeView(View);
+
+    }
+
+
+    /**
+     * 对外提供设置点击事件的方法
+     *
+     * @return
+     */
+    public FloatWindow setOnClickListener(OnClickListener onClickListener) {
+
+        this.onClickListener = onClickListener;
+
+        return mInstance;
+    }
+
+    /**
+     * 内部接口，点击时间的回调
+     */
+
+    interface OnClickListener {
+
+        void OnClick();
     }
 }

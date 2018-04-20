@@ -10,6 +10,7 @@ import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.Surface;
 import android.view.TextureView;
@@ -36,8 +37,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private SurfaceTexture mSurfaceTexture;
     private XTextureView mTextureView;
     private int BufferPercentage;
-    private WindowManager mWindowManager;
-    private WindowManager.LayoutParams mLayoutParams;
+
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -64,9 +64,50 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         //更改当前UI状态为正在准备中，同时调用控制器中更新Ui的方法
         mCurrentState = Constants.STATE_IDLE;
         mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
-        //把控制器布局添加到播放器中
+        //把控制器布局添加到容器中
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
-        this.addView(mController, params);
+        mContainer.addView(mController, params);
+    }
+
+    //用户点击控制器播放按钮时候调用的方法
+    @Override
+    public void start() {
+        //初始化播放器
+        initMediaPlayer();
+        //初始化TextTureView控件
+        initTextureView();
+        //添加TextureView到容器中
+        addTextureView();
+    }
+
+    //初始化播放器
+    private void initMediaPlayer() {
+
+        if (mediaPlayer == null) {
+            mediaPlayer = new IjkMediaPlayer();
+        }
+    }
+
+    //初始化TextureView，并设置创建SurfaceTexture完成监听
+    private void initTextureView() {
+
+        if (mTextureView == null) {
+            mTextureView = new XTextureView(mContext);
+            mTextureView.setSurfaceTextureListener(this);
+        }
+
+    }
+
+    /**
+     * 添加TextureView到容器中
+     */
+    private void addTextureView() {
+        mContainer.removeView(mTextureView);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                Gravity.CENTER);
+        mContainer.addView(mTextureView, 0, params);
     }
 
 
@@ -89,7 +130,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     @Override
     public boolean onSurfaceTextureDestroyed(SurfaceTexture surface) {
-        return false;
+
+        return mTextureView==null;
     }
 
     @Override
@@ -225,47 +267,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     //=====================================播放器控给控制器提供的逻辑方法=======================================
 
 
-    //用户点击控制器播放按钮时候调用的方法
-    @Override
-    public void start() {
-        //初始化播放器
-        initMediaPlayer();
-        //初始化TextTureView控件
-        initTextureView();
-        //添加TextureView到容器中
-        addTextureView();
-    }
-
-    //初始化播放器
-    private void initMediaPlayer() {
-
-        if (mediaPlayer == null) {
-            mediaPlayer = new IjkMediaPlayer();
-        }
-    }
-
-    //初始化TextureView，并设置创建SurfaceTexture完成监听
-    private void initTextureView() {
-
-        if (mTextureView == null) {
-            mTextureView = new XTextureView(mContext);
-            mTextureView.setSurfaceTextureListener(this);
-        }
-
-    }
-
-    /**
-     * 添加TextureView到容器中
-     */
-    private void addTextureView() {
-        mContainer.removeView(mTextureView);
-        LayoutParams params = new LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                ViewGroup.LayoutParams.MATCH_PARENT,
-                Gravity.CENTER);
-        mContainer.addView(mTextureView, 0, params);
-    }
-
     //用户暂停的方法
     @Override
     public void Pause() {
@@ -306,7 +307,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return BufferPercentage;
     }
 
-    //视频进入悬浮窗模式
+
+    //==============================================视频进入悬浮窗模式=========================================================
     @Override
     public void enterFloatWindow() {
 
@@ -342,20 +344,32 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
      * 设置WindowManager
      */
     private void createWindowManager() {
-
+        //这里让控制器隐藏
+        mController.setVisibility(GONE);
         FloatWindow
                 .getInstance(mContext)
                 .setType(WindowManager.LayoutParams.TYPE_PHONE) // 设置窗体显示类型——TYPE_SYSTEM_ALERT(系统提示)
-                .setFlags(WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)  // FLAG_NOT_FOCUSABLE(不能获得按键输入焦点)
+                .setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
+                        | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)  // FLAG_NOT_FOCUSABLE(不能获得按键输入焦点)
                 .setFormat(PixelFormat.RGBA_8888)
-                .setGravity(Gravity.TOP| Gravity.LEFT)
-                .setWidth(WindowManager.LayoutParams.WRAP_CONTENT)
-                .setHeight(WindowManager.LayoutParams.WRAP_CONTENT)
-                .setX(0)
-                .setY(100)
                 .addView(mTextureView)
-                .show();
+                .setOnClickListener(new FloatWindow.OnClickListener() {
+                    @Override
+                    public void OnClick() {
+                        //移除小窗
+                        FloatWindow.getInstance(mContext).dismass();
+                        //把之前的mTextureView设置为null
+                        mTextureView = null;
+                        //这里一定要从新初始化一个TextureView，因为之前的TextureView回走销毁方法，至于为什么现在还不知道
+                        initTextureView();
+                        addTextureView();
+                        //这里让控制器显示
+                        mController.setVisibility(VISIBLE);
 
+
+                    }
+                })
+                .show();
 
 
     }

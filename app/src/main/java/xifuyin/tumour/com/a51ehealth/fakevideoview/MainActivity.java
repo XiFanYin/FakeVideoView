@@ -2,7 +2,9 @@ package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -16,5 +18,14 @@ public class MainActivity extends AppCompatActivity {
         QQBrowserController controller = new QQBrowserController(this);
         controller.setUrl("http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4");
         xvideo_view.setController(controller);
+
+
+    }
+
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FloatWindow.getInstance(getApplicationContext()).dismass();
     }
 }

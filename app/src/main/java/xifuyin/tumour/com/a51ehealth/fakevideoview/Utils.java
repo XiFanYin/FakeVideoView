@@ -1,10 +1,13 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.ContextWrapper;
 import android.graphics.Bitmap;
 import android.media.MediaMetadataRetriever;
 import android.provider.Settings;
 import android.util.Log;
+import android.util.TypedValue;
 
 import java.lang.reflect.Method;
 import java.util.Formatter;
@@ -60,7 +63,7 @@ public class Utils {
         } catch (IllegalArgumentException e) {
             e.printStackTrace();
 
-            Log.e("rrrrrrrrrrrrr","rrrrrrrrrrrr2");
+            Log.e("rrrrrrrrrrrrr", "rrrrrrrrrrrr2");
         } finally {
             retriever.release();
         }
@@ -70,6 +73,7 @@ public class Utils {
 
     /**
      * 悬浮窗权限问题
+     *
      * @param context
      * @return
      */
@@ -85,5 +89,7 @@ public class Utils {
         }
         return result;
     }
+
+
 
 }
