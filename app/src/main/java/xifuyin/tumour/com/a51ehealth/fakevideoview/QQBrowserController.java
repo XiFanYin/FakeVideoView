@@ -4,14 +4,19 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.support.annotation.NonNull;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import org.w3c.dom.Text;
 
 /**
  * Created by Administrator on 2018/4/17.
@@ -35,6 +40,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public LinearLayout bottom;
     public ImageView center_start;
     private ProgressBar progress_bar;
+    private TextView hintText;
 
 
     public QQBrowserController(@NonNull Context context) {
@@ -186,12 +192,24 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             case Constants.MODE_NORMAL://播放器在默认模式下
 
+                //获取容器布局,移除添加的提示TextView
+                FrameLayout container1 = xVideoView.getContainer();
+                container1.removeView(hintText);
+                //让控制器显示
                 setVisibility(VISIBLE);
-
                 break;
 
             case Constants.MODE_TINY_WINDOW://播放器在Tiny模式下
-
+                //获取容器布局,添加的提示TextView
+                FrameLayout container2 = xVideoView.getContainer();
+                hintText = new TextView(mContext);
+                hintText.setText("当前视频正在小窗中播放");
+                hintText.setTextSize(14);
+                FrameLayout.LayoutParams textParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                textParams.gravity = Gravity.CENTER;
+                hintText.setTextColor(mContext.getResources().getColor(R.color.colorHint));
+                container2.addView(hintText,textParams);
+                //让控制器消失
                 setVisibility(GONE);
 
                 break;

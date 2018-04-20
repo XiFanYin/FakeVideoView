@@ -16,6 +16,7 @@ import android.view.TextureView;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
+import android.widget.Toast;
 
 import java.io.IOException;
 
@@ -277,6 +278,13 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return mCurrentMode == Constants.MODE_NORMAL;
     }
 
+    @Override
+    public FrameLayout getContainer() {
+
+
+        return   mContainer;
+    }
+
 
     //=====================================播放器控给控制器提供的逻辑方法=======================================
 
@@ -357,7 +365,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
      * 显示小窗口
      */
     private void createTinyWindow() {
-
         //改变模式，更新Ui
         mCurrentMode = Constants.MODE_TINY_WINDOW;
         mController.onPlayModeChanged(mCurrentMode);
@@ -385,14 +392,16 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                 .setOnClickListener(new FloatWindow.OnClickListener() {
                     @Override
                     public void onTinyClick() {
-
+                        Toast.makeText(mContext, "未来点击直接进入大屏幕播放", Toast.LENGTH_SHORT).show();
                     }
-
                     @Override
                     public void onCloseClick() {
+                        //改变模式，更新Ui
                         mCurrentMode = Constants.MODE_NORMAL;
                         mController.onPlayModeChanged(mCurrentMode);
+                        //移除窗口模式
                         FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
+                        //这里要从新创建一个mTextureView，因为之前的mTextureView会走销毁方法，我也不知道为什么，但是对应mTextureView中的mSurfaceTexture没有被销毁，所以视频是连续播放的
                         mTextureView = null;
                         initTextureView();
                         addTextureView();

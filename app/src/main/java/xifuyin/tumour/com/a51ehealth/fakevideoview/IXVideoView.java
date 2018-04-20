@@ -1,5 +1,7 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
+import android.widget.FrameLayout;
+
 /**
  * Created by Administrator on 2018/4/17.
  */
@@ -76,4 +78,8 @@ public interface IXVideoView {
     boolean isTinyWindow();
     boolean isNormal();
 
+
+    //=============================================对外提供返回容器布局的方法=============================================
+
+    FrameLayout getContainer();
 }
