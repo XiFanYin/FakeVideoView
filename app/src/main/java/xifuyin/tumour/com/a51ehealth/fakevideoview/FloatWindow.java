@@ -133,7 +133,7 @@ public class FloatWindow {
             }
         });
 
-
+        //添加播放器到小屏幕中去
         newContainer.addView(TextureView, 0);
 
 
