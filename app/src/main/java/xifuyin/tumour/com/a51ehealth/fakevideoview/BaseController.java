@@ -55,7 +55,7 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
 
 
     //根据播放器的显示模式去更新控制器Ui的显示
-    public abstract void  onPlayModeChanged(int Mode);
+    public abstract void onPlayModeChanged(int Mode);
 
 //===============================================和进度有关的逻辑======================================================
 
@@ -115,12 +115,14 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
                 public void onTick(long millisUntilFinished) {
 
                 }
-
                 @Override
                 public void onFinish() {
-
-                    setTopBottomVisible(topBottomVisible, true);
-
+                    setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
+                    setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏
+                    if (xVideoView.isPlaying()) {
+                        setCenterImageViesible(topBottomVisible);//设置中间播放按钮是否显示和隐藏
+                    }
+                    topBottomVisible = !topBottomVisible;
                 }
             };
         }
@@ -141,7 +143,18 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
      *
      * @param visible
      */
-    abstract void setTopBottomVisible(boolean visible, boolean centerAutoVisible);
+    abstract void setTopBottomVisible(boolean visible);
+
+
+    /**
+     * 中间开始和暂停显示和隐藏
+     */
+    abstract void setCenterImageViesible(boolean visible);
+
+    /**
+     * 锁屏按钮显示和隐藏
+     */
+    abstract void setLockImageViesible(boolean visible);
 
 
     //===================================和url有关的=============================================

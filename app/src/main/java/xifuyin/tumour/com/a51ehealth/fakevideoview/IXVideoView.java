@@ -57,6 +57,12 @@ public interface IXVideoView {
 
     void enterFloatWindow();
 
+
+    /**
+     * 进入全屏
+     */
+    void enterFullScreen();
+
     //===============================播放器状态=================================
 
     boolean isIdle();
@@ -82,4 +88,6 @@ public interface IXVideoView {
     //=============================================对外提供返回容器布局的方法=============================================
 
     FrameLayout getContainer();
+
+
 }

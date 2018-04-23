@@ -1,7 +1,9 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
@@ -9,10 +11,12 @@ import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
+import android.support.v7.app.ActionBar;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.view.Surface;
 import android.view.TextureView;
+import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.FrameLayout;
@@ -115,7 +119,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
         if (mSurfaceTexture == null) {
-            mSurfaceTexture = surfaceTexture;//把mSurfaceTexture变成成员变量
+            mSurfaceTexture = surfaceTexture;//把mSurfaceTexture变成成员变量,解决切换大小屏幕时候，视频不显示问题
             openMediaPlayer();
         } else {
             mTextureView.setSurfaceTexture(mSurfaceTexture);
@@ -282,7 +286,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     public FrameLayout getContainer() {
 
 
-        return   mContainer;
+        return mContainer;
     }
 
 
@@ -330,13 +334,12 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     }
 
 
-    //==============================================视频进入悬浮窗模式=========================================================
+    //==============================================视频进入悬浮窗退出悬浮窗模式=========================================================
     @Override
     public void enterFloatWindow() {
 
         permission();
     }
-
 
     /**
      * 需要去根据手机系统版本去申请权限，这里分6.0之后和6.0之前，6.0之前适配慢慢来
@@ -394,6 +397,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                     public void onTinyClick() {
                         Toast.makeText(mContext, "未来点击直接进入大屏幕播放", Toast.LENGTH_SHORT).show();
                     }
+
                     @Override
                     public void onCloseClick() {
                         //改变模式，更新Ui
@@ -401,13 +405,57 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                         mController.onPlayModeChanged(mCurrentMode);
                         //移除窗口模式
                         FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
-                        //这里要从新创建一个mTextureView，因为之前的mTextureView会走销毁方法，我也不知道为什么，但是对应mTextureView中的mSurfaceTexture没有被销毁，所以视频是连续播放的
+                        //这里要从新创建一个mTextureView，因为之前的mTextureView会走销毁方法，会重新绘制，导致数据通道，这里设置数据通道是唯一的，就可以解决无缝切换屏幕效果
                         mTextureView = null;
                         initTextureView();
                         addTextureView();
 
                     }
                 });
+
+    }
+//====================================进入全屏退出全屏============================================================
+
+    /**
+     * 进入全屏
+     */
+    @SuppressLint("RestrictedApi")
+    @Override
+    public void enterFullScreen() {
+        //隐藏状态栏
+        Utils.scanForActivity(mContext)
+                .getWindow()
+                .setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+                        WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        //隐藏ActionBar
+        ActionBar ab = Utils.getAppCompActivity(mContext).getSupportActionBar();
+        if (ab != null) {
+            ab.setShowHideAnimationEnabled(false);//取消隐藏动画
+            ab.hide();
+        }
+        //设置屏幕为横屏显示
+        Utils.scanForActivity(mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        //  每个Activity里面都有一个android.R.content，它是一个FrameLayout，
+        // 里面包含了我们setContentView的所有控件。既然它是一个FrameLayout，我们就可以将它作为全屏的目标视图。
+        //获取目标视图
+        ViewGroup contentView = Utils.scanForActivity(mContext).findViewById(android.R.id.content);
+        LayoutParams params = new LayoutParams(
+                ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.MATCH_PARENT);
+        //移除mContainer 已经有的父类控件
+        this.removeView(mContainer);
+        //创建一个新的TextureView，从新添加
+        mContainer.removeView(mTextureView);
+        mTextureView = null;
+        initTextureView();
+        addTextureView();
+
+        //把当前播放器添加到目标视图中去
+        contentView.addView(mContainer, params);
+        //改变模式，更新Ui
+        mCurrentMode = Constants.MODE_FULL_SCREEN;
+        mController.onPlayModeChanged(mCurrentMode);
+
 
     }
 

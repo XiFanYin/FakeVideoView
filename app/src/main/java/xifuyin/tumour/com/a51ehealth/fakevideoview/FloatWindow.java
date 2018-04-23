@@ -120,7 +120,7 @@ public class FloatWindow {
         ImageView close = new ImageView(applicationContext);
         close.setImageResource(R.drawable.video_small_window_close);
         FrameLayout.LayoutParams close_Params = new FrameLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
-        close_Params.setMargins(0,0,20,20);
+        close_Params.setMargins(0, 0, 20, 20);
         newContainer.addView(close, close_Params);
 
         close.setOnClickListener(new View.OnClickListener() {
@@ -204,9 +204,9 @@ public class FloatWindow {
      * 移除悬浮窗
      */
     public void dismass() {
-
-        mWindowManager.removeView(newContainer);
-
+        if (newContainer != null) {
+            mWindowManager.removeView(newContainer);
+        }
     }
 
 
@@ -233,7 +233,6 @@ public class FloatWindow {
         void onCloseClick();
 
     }
-
 
 
 }

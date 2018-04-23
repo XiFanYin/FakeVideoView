@@ -115,6 +115,23 @@
             android:progressDrawable="@drawable/seek_progress"
             android:thumb="@drawable/seek_thumb" />
 
+        <TextView
+            android:id="@+id/position_full"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:00"
+            android:textColor="@android:color/white"
+            android:textSize="12sp"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/line"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="/"
+            android:textColor="@android:color/white"
+            android:textSize="14sp"
+            android:visibility="gone" />
 
         <TextView
             android:id="@+id/duration"
@@ -123,6 +140,7 @@
             android:text="00:00"
             android:textColor="@android:color/white"
             android:textSize="12sp" />
+
 
         <ImageView
             android:id="@+id/full_screen"

@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
+import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -34,6 +35,8 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public ImageView lock;
     public ImageView restart_or_pause;
     public TextView position;
+    public TextView position_full;
+    public TextView line;
     public SeekBar seek;
     public TextView duration;
     public ImageView full_screen;
@@ -41,6 +44,8 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public ImageView center_start;
     private ProgressBar progress_bar;
     private TextView hintText;
+    //屏幕锁是否已经上锁
+    private boolean isLock = false;
 
 
     public QQBrowserController(@NonNull Context context) {
@@ -68,6 +73,8 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         this.bottom = qq_controller.findViewById(R.id.bottom);
         this.center_start = qq_controller.findViewById(R.id.center_start);
         this.progress_bar = qq_controller.findViewById(R.id.progress_bar);
+        this.position_full = qq_controller.findViewById(R.id.position_full);
+        this.line = qq_controller.findViewById(R.id.line);
 
         //中心按钮的点击事件
         center_start.setOnClickListener(this);
@@ -116,20 +123,38 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         } else if (v == lock) {//锁定控制器被点击
 
-            Toast.makeText(mContext, "锁定控制器被点击", Toast.LENGTH_SHORT).show();
+            if (isLock) {
+
+
+            } else {
+
+
+            }
+
 
         } else if (v == restart_or_pause) {//开始暂停被点击
 
-            Toast.makeText(mContext, "开始暂停被点击", Toast.LENGTH_SHORT).show();
+            if (xVideoView.isPlaying()) {
+                xVideoView.Pause();
+            } else if (xVideoView.isPaused() || xVideoView.isCompleted()) {
+                xVideoView.restart();
+            }
 
         } else if (v == full_screen) {//全屏被点击
 
-            Toast.makeText(mContext, "全屏被点击", Toast.LENGTH_SHORT).show();
-
+            xVideoView.enterFullScreen();
+            topBottomVisible = true;
+            setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
+            setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
+            setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏
+            topBottomVisible = !topBottomVisible;
         } else if (v == this) {//整个控制器被点击
 
-            setTopBottomVisible(topBottomVisible, false);
 
+            setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
+            setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
+            setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏
+            topBottomVisible = !topBottomVisible;
         }
 
 
@@ -160,16 +185,16 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             case Constants.STATE_PLAYING://播放器正在播放
 
-                center_start.setImageResource(R.drawable.video_mid_play_fullscreen);
-                center_start.setVisibility(GONE);
+                center_start.setImageResource(R.drawable.video_mid_pause_fullscreen);
+                restart_or_pause.setImageResource(R.drawable.video_pause_wide);
                 cover.setVisibility(GONE);
                 startUpdateProgressTimer();//开启定时器，会调用更新进度
                 break;
 
 
             case Constants.STATE_PAUSED://用户点击了暂停按钮
-
-                center_start.setImageResource(R.drawable.video_mid_pause_fullscreen);
+                center_start.setImageResource(R.drawable.video_mid_play_fullscreen);
+                restart_or_pause.setImageResource(R.drawable.video_play_wide);
                 cancelUpdateProgressTimer();//取消更新进度的方法，否则视频播放完成，更新进度的定时器还是会走，浪费cpu,这个是父类的方法
                 break;
 
@@ -208,7 +233,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
                 FrameLayout.LayoutParams textParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 textParams.gravity = Gravity.CENTER;
                 hintText.setTextColor(mContext.getResources().getColor(R.color.colorHint));
-                container2.addView(hintText,textParams);
+                container2.addView(hintText, textParams);
                 //让控制器消失
                 setVisibility(GONE);
 
@@ -216,36 +241,21 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             case Constants.MODE_FULL_SCREEN://播放器在全屏模式下
 
-
+                back.setVisibility(VISIBLE);
+                title.setVisibility(VISIBLE);
+                share.setVisibility(VISIBLE);
+                menu.setVisibility(VISIBLE);
+                lock.setVisibility(VISIBLE);
+                restart_or_pause.setVisibility(VISIBLE);
+                position_full.setVisibility(VISIBLE);
+                line.setVisibility(VISIBLE);
+                position.setVisibility(GONE);
+                full_screen.setVisibility(GONE);
+                center_start.setVisibility(GONE);
                 break;
 
         }
 
-    }
-
-
-    /**
-     * 设置top、bottom控制器显示和隐藏
-     *
-     * @param visible
-     */
-
-    @Override
-    public void setTopBottomVisible(boolean visible, boolean centerAutoVisible) {
-
-        if (xVideoView.isPlaying() || xVideoView.isCompleted() || xVideoView.isPaused()) {
-            top.setVisibility(visible ? View.GONE : View.VISIBLE);
-            bottom.setVisibility(visible ? View.GONE : View.VISIBLE);
-            center_start.setVisibility(centerAutoVisible ? (xVideoView.isPaused() ? (View.VISIBLE) : (View.GONE)) : (visible ? View.GONE : View.VISIBLE));
-        }
-
-        if (visible) {
-            cancelDismissTopBottomTimer();
-        } else {
-            startDismissTopBottomTimer();
-        }
-
-        topBottomVisible = !visible;
     }
 
 
@@ -262,10 +272,64 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         int bufferPercentage = xVideoView.getBufferPercentage();
         //设置数据到控件
         position.setText(Utils.formatTime(currentPosition));
+        position_full.setText(Utils.formatTime(currentPosition));
         duration.setText(Utils.formatTime(durationPosition));
         int progress = (int) (100 * currentPosition / durationPosition);//计算进度百分比，转换层int，因为下边接受的就是int类型的值
         seek.setProgress(progress);//设置进度条
         seek.setSecondaryProgress(bufferPercentage);//设置缓存百分比
+
+    }
+
+    /**
+     * 顶部和底部控制器显示和隐藏
+     *
+     * @param visible
+     */
+    @Override
+    protected void setTopBottomVisible(boolean visible) {
+        if (xVideoView.isPlaying() || xVideoView.isCompleted() || xVideoView.isPaused()) {
+            top.setVisibility(visible ? View.GONE : View.VISIBLE);
+            bottom.setVisibility(visible ? View.GONE : View.VISIBLE);
+        }
+        if (visible) {
+            cancelDismissTopBottomTimer();
+        } else {
+            startDismissTopBottomTimer();
+        }
+
+    }
+
+    /**
+     * 中间开始和暂停显示和隐藏
+     */
+    @Override
+    protected void setCenterImageViesible(boolean visible) {
+
+
+        if (xVideoView.isFullScreen()) {
+
+            center_start.setVisibility(GONE);
+
+        } else {
+
+            if (xVideoView.isPlaying() || xVideoView.isCompleted()) {
+                center_start.setVisibility(visible ? View.GONE : View.VISIBLE);
+            }
+
+        }
+
+    }
+
+    /**
+     * 锁屏按钮显示和隐藏
+     */
+    @Override
+    protected void setLockImageViesible(boolean visible) {
+        if (xVideoView.isFullScreen()) {
+            lock.setVisibility(visible ? View.GONE : View.VISIBLE);
+        } else {
+            lock.setVisibility(GONE);
+        }
 
     }
 
