@@ -374,7 +374,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
         FloatWindow
                 .getInstance(mContext.getApplicationContext())
-                .setType(WindowManager.LayoutParams.TYPE_PHONE) // 设置窗体显示类型——TYPE_SYSTEM_ALERT(系统提示)
                 .setFlags(WindowManager.LayoutParams.FLAG_NOT_TOUCH_MODAL
                         | WindowManager.LayoutParams.FLAG_NOT_FOCUSABLE)  // FLAG_NOT_FOCUSABLE(不能获得按键输入焦点)
                 .setFormat(PixelFormat.RGBA_8888)
@@ -446,7 +445,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                 ViewGroup.LayoutParams.MATCH_PARENT);
         //移除mContainer 已经有的父类控件
         this.removeView(mContainer);
-        //创建一个新的TextureView，从新添加
+        //创建一个新的TextureView，从新添加，注释掉有黑边，不注释掉视频变形
         mContainer.removeView(mTextureView);
         mTextureView = null;
         initTextureView();

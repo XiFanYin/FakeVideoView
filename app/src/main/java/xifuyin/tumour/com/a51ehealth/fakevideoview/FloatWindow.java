@@ -1,6 +1,7 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
+import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
@@ -60,19 +61,17 @@ public class FloatWindow {
 
         mLayoutParams.width = width / 2;
         mLayoutParams.height = width * 9 / 32;
+
+        // 设置窗体显示类型——TYPE_SYSTEM_ALERT(系统提示)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {//8.0+
+            mLayoutParams.type = WindowManager.LayoutParams.TYPE_APPLICATION_OVERLAY;
+        } else {
+            mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
+        }
+
     }
 
-    /**
-     * 设置显示类型
-     *
-     * @param layoutParamsType
-     * @return
-     */
-    public FloatWindow setType(int layoutParamsType) {
-        // 设置窗体显示类型——TYPE_SYSTEM_ALERT(系统提示)
-        mLayoutParams.type = WindowManager.LayoutParams.TYPE_SYSTEM_ALERT;
-        return mInstance;
-    }
+
 
     /**
      * 设置显示标记
