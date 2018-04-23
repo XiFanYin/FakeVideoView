@@ -129,9 +129,11 @@ public class QQBrowserController extends BaseController implements View.OnClickL
                 setTopBottomVisible(topBottomVisible);
                 topBottomVisible = !topBottomVisible;
                 startDismissTopBottomTimer();
+                cancelDismissLockTimer();
             } else {
                 lock.setImageResource(R.drawable.video_lock);
                 cancelDismissTopBottomTimer();
+                startDismissLockTimer();
                 topBottomVisible = true;
                 setTopBottomVisible(topBottomVisible);
             }
@@ -161,11 +163,13 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         } else if (v == this) {//整个控制器被点击
 
             if (isLock) {
+                startDismissLockTimer();
                 setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
                 setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
-                setLockImageViesible(!topBottomVisible);//设置锁的显示和隐藏
+                setLockImageViesible(topBottomVisible && LockVisible);//设置锁的显示和隐藏
+                LockVisible = !LockVisible;
             } else {
-
+                cancelDismissLockTimer();
                 setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
                 setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
                 setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏

@@ -24,7 +24,9 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     private TimerTask mUpdateProgressTimerTask;
     private CountDownTimer mDismissTopBottomCountDownTimer;
     public boolean topBottomVisible = false;//顶部和底部默认不显示
+    public boolean LockVisible = true;//锁是否显示和隐藏标记
     public String url;
+    private CountDownTimer mDismissLockTimer;
 
     public BaseController(@NonNull Context context) {
         super(context);
@@ -115,6 +117,7 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
                 public void onTick(long millisUntilFinished) {
 
                 }
+
                 @Override
                 public void onFinish() {
                     setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
@@ -179,7 +182,39 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
         return url;
     }
 
+
+    //==============================================和锁显示隐藏有关的定时器=======================================
     ;
 
+    /**
+     * 开启锁自动消失的timer
+     */
+    protected void startDismissLockTimer() {
+        cancelDismissLockTimer();
+        if (mDismissLockTimer == null) {
+            mDismissLockTimer = new CountDownTimer(5000, 1000) {
+                @Override
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                @Override
+                public void onFinish() {
+                    setLockImageViesible(LockVisible);
+                    LockVisible = !LockVisible;
+                }
+            };
+        }
+        mDismissLockTimer.start();
+    }
+
+    /**
+     * 取消锁自动消失的timer
+     */
+    protected void cancelDismissLockTimer() {
+        if (mDismissLockTimer != null) {
+            mDismissLockTimer.cancel();
+        }
+    }
 
 }
