@@ -115,7 +115,13 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         } else if (v == tiny_window) {//小屏按钮被点击
 
-            xVideoView.enterFloatWindow();
+            if (xVideoView.isFullScreen()) {
+                xVideoView.exitFullScreen();
+                xVideoView.enterFloatWindow();
+
+            } else if (xVideoView.isNormal()) {
+                xVideoView.enterFloatWindow();
+            }
 
         } else if (v == menu) {//菜单被点击
 
@@ -239,8 +245,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             case Constants.MODE_NORMAL://播放器在默认模式下
                 //获取容器布局,移除添加的提示TextView
-                FrameLayout container1 = xVideoView.getContainer();
-                container1.removeView(hintText);
+                xVideoView.getContainer().removeView(hintText);
                 //让控制器显示
                 setVisibility(VISIBLE);
 
@@ -274,6 +279,10 @@ public class QQBrowserController extends BaseController implements View.OnClickL
                 break;
 
             case Constants.MODE_FULL_SCREEN://播放器在全屏模式下
+                //获取容器布局,移除添加的提示TextView
+                xVideoView.getContainer().removeView(hintText);
+                //让控制器显示
+                setVisibility(VISIBLE);
 
                 back.setVisibility(VISIBLE);
                 title.setVisibility(VISIBLE);
@@ -382,5 +391,11 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         int progress = seekBar.getProgress();
         long touchProgress = (progress * xVideoView.getDuration() / 100);
         xVideoView.seekTo(touchProgress);
+    }
+
+
+    //============================对外暴漏的方法，设置视频名称的方法==================================
+    public void setTitle(String title) {
+        this.title.setText(title);
     }
 }

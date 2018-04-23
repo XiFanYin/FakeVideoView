@@ -395,7 +395,9 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                 .setOnClickListener(new FloatWindow.OnClickListener() {
                     @Override
                     public void onTinyClick() {
-                        Toast.makeText(mContext, "未来点击直接进入大屏幕播放", Toast.LENGTH_SHORT).show();
+
+                        FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
+                        enterFullScreen();
                     }
 
                     @Override
@@ -479,7 +481,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         Utils.scanForActivity(mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
         //获取目标视图
         ViewGroup contentView = Utils.scanForActivity(mContext).findViewById(android.R.id.content);
-        LayoutParams params = new LayoutParams( ViewGroup.LayoutParams.MATCH_PARENT,ViewGroup.LayoutParams.MATCH_PARENT);
+        LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         //移除跟布局中已有的mContainer
         contentView.removeView(mContainer);
         //创建一个新的TextureView，从新添加
