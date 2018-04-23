@@ -107,7 +107,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         } else if (v == back) {//返回按钮被点击
 
-            Toast.makeText(mContext, "返回按钮被点击", Toast.LENGTH_SHORT).show();
+            xVideoView.exitFullScreen();
 
         } else if (v == share) {//分享按钮被点击
 
@@ -238,12 +238,24 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         switch (Mode) {
 
             case Constants.MODE_NORMAL://播放器在默认模式下
-
                 //获取容器布局,移除添加的提示TextView
                 FrameLayout container1 = xVideoView.getContainer();
                 container1.removeView(hintText);
                 //让控制器显示
                 setVisibility(VISIBLE);
+
+                position.setVisibility(VISIBLE);
+                full_screen.setVisibility(VISIBLE);
+                center_start.setVisibility(VISIBLE);
+                back.setVisibility(GONE);
+                title.setVisibility(INVISIBLE);
+                share.setVisibility(GONE);
+                menu.setVisibility(GONE);
+                lock.setVisibility(GONE);
+                restart_or_pause.setVisibility(GONE);
+                position_full.setVisibility(GONE);
+                line.setVisibility(GONE);
+
                 break;
 
             case Constants.MODE_TINY_WINDOW://播放器在Tiny模式下
@@ -327,11 +339,9 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     @Override
     protected void setCenterImageViesible(boolean visible) {
 
-
         if (xVideoView.isFullScreen()) {
 
             center_start.setVisibility(GONE);
-
         } else {
 
             if (xVideoView.isPlaying() || xVideoView.isCompleted()) {

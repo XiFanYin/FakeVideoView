@@ -63,6 +63,12 @@ public interface IXVideoView {
      */
     void enterFullScreen();
 
+    /**
+     * 退出全屏
+     */
+
+    void exitFullScreen();
+
     //===============================播放器状态=================================
 
     boolean isIdle();
@@ -76,12 +82,13 @@ public interface IXVideoView {
     boolean isCompleted();
 
 
-
 //=====================================播放器显示的模式===========================================
 
 
     boolean isFullScreen();
+
     boolean isTinyWindow();
+
     boolean isNormal();
 
 
