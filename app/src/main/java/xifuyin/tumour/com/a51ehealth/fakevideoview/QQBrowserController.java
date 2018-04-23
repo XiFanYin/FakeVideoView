@@ -124,13 +124,18 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         } else if (v == lock) {//锁定控制器被点击
 
             if (isLock) {
-
-
+                lock.setImageResource(R.drawable.video_unlock);
+                topBottomVisible = false;
+                setTopBottomVisible(topBottomVisible);
+                topBottomVisible = !topBottomVisible;
+                startDismissTopBottomTimer();
             } else {
-
-
+                lock.setImageResource(R.drawable.video_lock);
+                cancelDismissTopBottomTimer();
+                topBottomVisible = true;
+                setTopBottomVisible(topBottomVisible);
             }
-
+            isLock = !isLock;
 
         } else if (v == restart_or_pause) {//开始暂停被点击
 
@@ -143,18 +148,31 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         } else if (v == full_screen) {//全屏被点击
 
             xVideoView.enterFullScreen();
-            topBottomVisible = true;
+            if (xVideoView.isPlaying()) {
+                topBottomVisible = true;
+            } else {
+                topBottomVisible = false;
+            }
             setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
             setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
             setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏
             topBottomVisible = !topBottomVisible;
+
         } else if (v == this) {//整个控制器被点击
 
+            if (isLock) {
+                setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
+                setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
+                setLockImageViesible(!topBottomVisible);//设置锁的显示和隐藏
+            } else {
 
-            setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
-            setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
-            setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏
-            topBottomVisible = !topBottomVisible;
+                setTopBottomVisible(topBottomVisible);//设置顶部和底部显示和隐藏
+                setCenterImageViesible(topBottomVisible);//设置中心按钮显示和隐藏
+                setLockImageViesible(topBottomVisible);//设置锁的显示和隐藏
+                topBottomVisible = !topBottomVisible;
+            }
+
+
         }
 
 
