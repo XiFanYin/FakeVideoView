@@ -214,6 +214,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
                 restart_or_pause.setImageResource(R.drawable.video_pause_wide);
                 cover.setVisibility(GONE);
                 startUpdateProgressTimer();//开启定时器，会调用更新进度
+                center_start.setVisibility(GONE);
                 break;
 
 
@@ -226,8 +227,11 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             case Constants.STATE_COMPLETED://播放完成后更新Ui
 
-                cancelUpdateProgressTimer();//取消更新进度的方法，否则视频播放完成，更新进度的定时器还是会走，浪费cpu,这个是父类的方法
+                reset();
                 cover.setVisibility(VISIBLE);
+
+                Log.e("rrrrrrrrrrrrr", "STATE_COMPLETED");
+
                 break;
 
 
@@ -392,6 +396,8 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         bottom.setVisibility(GONE);
         cover.setVisibility(VISIBLE);
         center_start.setVisibility(VISIBLE);
+        center_start.setImageResource(R.drawable.video_mid_play_fullscreen);
+
     }
 
 

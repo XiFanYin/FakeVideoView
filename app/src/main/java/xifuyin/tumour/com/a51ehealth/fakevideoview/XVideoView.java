@@ -324,6 +324,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         if (isTinyWindow()) {
             exitTinyWindow();
         }
+        //把控制器Ui更新到默认模式，取消所有定时器,一定要先取消然后再去释放mediaPlayer否则可能出现空指针异常
+        mController.reset();
         // 释放播放器
         releasePlayer();
 
@@ -345,14 +347,14 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
             mediaPlayer.release();
             mediaPlayer = null;
         }
+        //把播放器状态也恢复到默认状态
+        mCurrentState = Constants.STATE_IDLE;
+        mCurrentMode = Constants.MODE_NORMAL;
         //移除掉mTextureView
         mContainer.removeView(mTextureView);
         mTextureView = null;
 
-        //把控制器Ui更新到默认模式，取消所有定时器
-        mController.reset();
-        //把播放器状态也恢复到默认状态
-        mCurrentState = Constants.STATE_IDLE;
+
     }
 
 
