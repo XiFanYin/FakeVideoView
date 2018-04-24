@@ -193,8 +193,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         switch (state) {
 
             case Constants.STATE_IDLE://默认状态
-                Bitmap videoThumbnail = Utils.getVideoThumbnail(url);
-                cover.setImageBitmap(videoThumbnail);
 
                 break;
             case Constants.STATE_PREPARING://正在准备播放状态，对应去更新UI
@@ -423,5 +421,11 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     //============================对外暴漏的方法，设置视频名称的方法==================================
     public void setTitle(String title) {
         this.title.setText(title);
+    }
+
+
+    public ImageView getCover() {
+
+        return cover;
     }
 }

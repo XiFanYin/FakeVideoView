@@ -458,7 +458,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
 
     //退出小屏幕，回到默认模式
-    private void exitTinyWindow() {
+    public void exitTinyWindow() {
         //改变模式，更新Ui
         mCurrentMode = Constants.MODE_NORMAL;
         mController.onPlayModeChanged(mCurrentMode);

@@ -63,7 +63,7 @@ public interface IXVideoView {
 
     void enterFloatWindow();
 
-
+    void exitTinyWindow();
     /**
      * 进入全屏
      */
