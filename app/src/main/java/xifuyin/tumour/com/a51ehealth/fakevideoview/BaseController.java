@@ -250,4 +250,10 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
         }
     }
 
+
+
+    /**
+     * 重置控制器，将控制器恢复到初始状态。在列表时候
+     */
+    protected abstract void reset();
 }

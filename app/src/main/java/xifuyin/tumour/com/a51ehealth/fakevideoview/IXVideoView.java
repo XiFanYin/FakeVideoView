@@ -25,6 +25,12 @@ public interface IXVideoView {
      */
     void restart();
 
+
+    /**
+     * 释放播放器，
+     */
+    void release();
+
     /**
      * 获取办法给总时长，毫秒
      *

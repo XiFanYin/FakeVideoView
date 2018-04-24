@@ -2,6 +2,7 @@ package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
@@ -44,7 +45,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public ImageView center_start;
     private ProgressBar progress_bar;
     private TextView hintText;
-
 
 
     public QQBrowserController(@NonNull Context context) {
@@ -195,8 +195,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
             case Constants.STATE_IDLE://默认状态
                 Bitmap videoThumbnail = Utils.getVideoThumbnail(url);
                 cover.setImageBitmap(videoThumbnail);
-                cover.setVisibility(VISIBLE);
-                center_start.setVisibility(VISIBLE);
 
                 break;
             case Constants.STATE_PREPARING://正在准备播放状态，对应去更新UI
@@ -371,6 +369,29 @@ public class QQBrowserController extends BaseController implements View.OnClickL
             lock.setVisibility(GONE);
         }
 
+    }
+
+    /**
+     * 重置控制器，将控制器恢复到初始状态。在列表时候，这里不可能是全屏和小屏时候调用，只可能谁默认情况下才调用
+     */
+    @Override
+    protected void reset() {
+        //所有标记回复默认状态
+        topBottomVisible = false;
+        LockVisible = true;
+        isLock = false;
+
+        //取消所有定时器
+        cancelUpdateProgressTimer();
+        cancelDismissTopBottomTimer();
+        cancelDismissLockTimer();
+
+        seek.setProgress(0);//设置mSeek的进度为0
+        seek.setSecondaryProgress(0);//设置mSeek的加载进度为0
+        top.setVisibility(GONE);
+        bottom.setVisibility(GONE);
+        cover.setVisibility(VISIBLE);
+        center_start.setVisibility(VISIBLE);
     }
 
 

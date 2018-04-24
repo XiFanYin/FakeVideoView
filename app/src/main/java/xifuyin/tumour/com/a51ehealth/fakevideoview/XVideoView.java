@@ -42,6 +42,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private XTextureView mTextureView;
     private int BufferPercentage;
     private int mCurrentMode = Constants.MODE_NORMAL;
+    private Surface surface;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -62,6 +63,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
      * @param mController
      */
     public void setController(BaseController mController) {
+        //把播放器恢复到默认状态
+        mController.reset();
         mContainer.removeView(mController);//先移除之前添加的控制器，如果第一次添加也不会报错，因为系统已经做了判断
         this.mController = mController;//这里就持有控制器的对象
         mController.setXVideoView(this);//这里设置播放器对象
@@ -76,6 +79,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     //用户点击控制器播放按钮时候调用的方法
     @Override
     public void start() {
+        //记录当前创建的播放器，处理只能有一个视频播放
+        XVideoViewManager.getInstance().setCurrentNiceVideoPlayer(this);
         //初始化播放器
         initMediaPlayer();
         //初始化TextTureView控件
@@ -152,7 +157,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         mediaPlayer.setOnCompletionListener(onCompletion());//视频完成播放时候监听
         mediaPlayer.setOnBufferingUpdateListener(onBufferingUpdate());//视频缓存信息监听,显示在底部进度条的第二图层中
         //创建Surface对象，让mediaPlayer通过Surface 和mSurfaceTexture与TextureView关联起来
-        Surface surface = new Surface(mSurfaceTexture);
+        surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);//设置视频流
         try {
             mediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(mController.getUrl()));//设置视频播放地址
@@ -308,6 +313,49 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
     }
 
+    //释放掉播放器状态
+    @Override
+    public void release() {
+        // 如果是全屏，就退出全屏
+        if (isFullScreen()) {
+            exitFullScreen();
+        }
+        //如果是小屏幕就退出小屏幕
+        if (isTinyWindow()) {
+            exitTinyWindow();
+        }
+        // 释放播放器
+        releasePlayer();
+
+    }
+
+    private void releasePlayer() {
+        //释放掉surface数据通道
+        if (surface != null) {
+            surface.release();
+            surface = null;
+        }
+        //释放掉mSurfaceTexture数据通道
+        if (mSurfaceTexture != null) {
+            mSurfaceTexture.release();
+            mSurfaceTexture = null;
+        }
+        //释放掉mediaPlayer
+        if (mediaPlayer != null) {
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+        //移除掉mTextureView
+        mContainer.removeView(mTextureView);
+        mTextureView = null;
+
+        //把控制器Ui更新到默认模式，取消所有定时器
+        mController.reset();
+        //把播放器状态也恢复到默认状态
+        mCurrentState = Constants.STATE_IDLE;
+    }
+
+
     //返回视频的总长度
     @Override
     public long getDuration() {
@@ -400,15 +448,21 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
                     @Override
                     public void onCloseClick() {
-                        //改变模式，更新Ui
-                        mCurrentMode = Constants.MODE_NORMAL;
-                        mController.onPlayModeChanged(mCurrentMode);
-                        //移除窗口模式
-                        FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
-                        addTextureView();
+                        exitTinyWindow();
                     }
                 });
 
+    }
+
+
+    //退出小屏幕，回到默认模式
+    private void exitTinyWindow() {
+        //改变模式，更新Ui
+        mCurrentMode = Constants.MODE_NORMAL;
+        mController.onPlayModeChanged(mCurrentMode);
+        //移除窗口模式
+        FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
+        addTextureView();
     }
 //====================================进入全屏退出全屏============================================================
 
