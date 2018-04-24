@@ -44,8 +44,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public ImageView center_start;
     private ProgressBar progress_bar;
     private TextView hintText;
-    //屏幕锁是否已经上锁
-    private boolean isLock = false;
+
 
 
     public QQBrowserController(@NonNull Context context) {

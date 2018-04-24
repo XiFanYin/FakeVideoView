@@ -27,6 +27,8 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     public boolean LockVisible = true;//锁是否显示和隐藏标记
     public String url;
     private CountDownTimer mDismissLockTimer;
+    //屏幕锁是否已经上锁
+    public boolean isLock = false;
 
     public BaseController(@NonNull Context context) {
         super(context);
@@ -41,6 +43,37 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
+        //如果不是全屏，让手势失效
+        if (!xVideoView.isFullScreen()) {
+            return false;
+        }
+        //如果是锁住控制器，让手势失效
+        if (isLock) {
+            return false;
+        }
+        //解析用户手势，
+        switch (event.getAction()) {
+
+            case MotionEvent.ACTION_DOWN://当按下的时候
+
+                break;
+
+            case MotionEvent.ACTION_MOVE://当移动的时候
+
+
+                break;
+
+
+            case MotionEvent.ACTION_UP://用户抬起手指或者是
+
+                break;
+
+            case MotionEvent.ACTION_CANCEL://用户移除到屏幕外边的时候
+
+                break;
+        }
+
+
         return false;
     }
 

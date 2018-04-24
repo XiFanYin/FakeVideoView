@@ -1,6 +1,7 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Build;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -26,7 +27,8 @@ public class FloatWindow {
     private static FloatWindow mInstance;
     private FrameLayout newContainer;
     private OnClickListener onClickListener;
-    private ViewGroup xVideoView;
+
+    private View TextureView;
 
 
     /**
@@ -72,7 +74,6 @@ public class FloatWindow {
     }
 
 
-
     /**
      * 设置显示标记
      *
@@ -100,13 +101,15 @@ public class FloatWindow {
 
 
     public FloatWindow addView(View TextureView) {
-
-        xVideoView = (ViewGroup) TextureView.getParent();
-        xVideoView.removeView(TextureView);
+        //获取传入的播放控件
+        this.TextureView = TextureView;
+        //移除绑定的父类控件
+        FrameLayout mContainer = (FrameLayout) TextureView.getParent();
+        mContainer.removeView(TextureView);
 
 
         newContainer = new FrameLayout(applicationContext);
-
+        newContainer.setBackgroundColor(Color.BLACK);
 
         //添加右下角标致
         ImageView zoom_hint = new ImageView(applicationContext);
@@ -205,6 +208,10 @@ public class FloatWindow {
     public void dismass() {
         if (newContainer != null) {
             mWindowManager.removeView(newContainer);
+            if (TextureView != null) {
+                newContainer.removeView(TextureView);
+            }
+
         }
     }
 

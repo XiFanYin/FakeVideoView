@@ -285,7 +285,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public FrameLayout getContainer() {
 
-
         return mContainer;
     }
 
@@ -394,8 +393,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                 .setOnClickListener(new FloatWindow.OnClickListener() {
                     @Override
                     public void onTinyClick() {
-
                         FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
+                        addTextureView();
                         enterFullScreen();
                     }
 
@@ -406,11 +405,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                         mController.onPlayModeChanged(mCurrentMode);
                         //移除窗口模式
                         FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
-                        //这里要从新创建一个mTextureView，因为之前的mTextureView会走销毁方法，会重新绘制，导致数据通道，这里设置数据通道是唯一的，就可以解决无缝切换屏幕效果
-                        mTextureView = null;
-                        initTextureView();
                         addTextureView();
-
                     }
                 });
 
@@ -445,12 +440,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                 ViewGroup.LayoutParams.MATCH_PARENT);
         //移除mContainer 已经有的父类控件
         this.removeView(mContainer);
-        //创建一个新的TextureView，从新添加，注释掉有黑边，不注释掉视频变形
-        mContainer.removeView(mTextureView);
-        mTextureView = null;
-        initTextureView();
-        addTextureView();
-
         //把当前播放器添加到目标视图中去
         contentView.addView(mContainer, params);
         //改变模式，更新Ui
@@ -483,14 +472,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         LayoutParams params = new LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT);
         //移除跟布局中已有的mContainer
         contentView.removeView(mContainer);
-        //创建一个新的TextureView，从新添加
-        mContainer.removeView(mTextureView);
-        mTextureView = null;
-        initTextureView();
-        addTextureView();
         //把当前播放器添加到自定义控件中
         addView(mContainer, params);
-
         //改变模式，更新Ui
         mCurrentMode = Constants.MODE_NORMAL;
         mController.onPlayModeChanged(mCurrentMode);
