@@ -13,7 +13,7 @@ public class MainActivity extends AppCompatActivity {
     private XVideoView xvideo_view2;
     private String url1 = "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4";
     private String url2 = "http://jzvd.nathen.cn/d2e969f2ec734520b46ab0965d2b68bd/f124edfef6c24be8b1a7b7f996ccc5e0-5287d2089db37e62345123a1be272f8b.mp4";
-
+    private String url3 = "http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

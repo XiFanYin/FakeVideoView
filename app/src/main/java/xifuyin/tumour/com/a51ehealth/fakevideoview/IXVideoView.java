@@ -63,6 +63,10 @@ public interface IXVideoView {
 
     void enterFloatWindow();
 
+    /**
+     * 退出悬浮窗
+     */
+
     void exitTinyWindow();
     /**
      * 进入全屏
@@ -102,5 +106,11 @@ public interface IXVideoView {
 
     FrameLayout getContainer();
 
-
+//===============================================和声音有关的============================================================================
+    //获取播放设置当前的声音
+    int getVolume();
+    //获取声音的最大值
+    int getMaxVolume();
+    //设置新的声音
+    void setVolume(int newVolume);
 }

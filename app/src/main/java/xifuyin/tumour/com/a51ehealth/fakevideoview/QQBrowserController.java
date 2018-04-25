@@ -310,7 +310,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     protected void updateProgress() {
         //获取播放器解析到的当前进度和整个视频长度，还有缓存进度
         long currentPosition = xVideoView.getCurrentPosition();
-        long durationPosition = xVideoView.getDuration();
+        long durationPosition = xVideoView.getDuration()+1;
         int bufferPercentage = xVideoView.getBufferPercentage();
         //设置数据到控件
         position.setText(Utils.formatTime(currentPosition));
@@ -399,6 +399,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     }
 
 
+
     //==============================================底部进度条拖动的回调=========================================================
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -416,6 +417,44 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         long touchProgress = (progress * xVideoView.getDuration() / 100);
         xVideoView.seekTo(touchProgress);
     }
+
+    //=========================================和手势有关的声音，亮度，和进度的改变调用对应的方法=====================================================
+
+
+
+    @Override
+    protected void showChangeBrightness(int newBrightnessProgress) {
+
+    }
+
+    @Override
+    protected void hideChangeBrightness() {
+
+    }
+
+    @Override
+    protected void showChangePosition(long duration, int newPositionProgress) {
+
+    }
+
+    @Override
+    protected void hideChangePosition() {
+
+    }
+
+    @Override
+    protected void showChangeVolume(int newVolumeProgress) {
+
+    }
+
+    @Override
+    protected void hideChangeVolume() {
+
+    }
+
+
+
+
 
 
     //============================对外暴漏的方法，设置视频名称的方法==================================

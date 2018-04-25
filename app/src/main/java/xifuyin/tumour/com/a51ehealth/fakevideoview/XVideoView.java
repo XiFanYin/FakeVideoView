@@ -7,6 +7,7 @@ import android.content.pm.ActivityInfo;
 import android.graphics.Color;
 import android.graphics.PixelFormat;
 import android.graphics.SurfaceTexture;
+import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Build;
 import android.support.annotation.NonNull;
@@ -43,6 +44,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private int BufferPercentage;
     private int mCurrentMode = Constants.MODE_NORMAL;
     private Surface surface;
+    private AudioManager mAudioManager;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -81,6 +83,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     public void start() {
         //记录当前创建的播放器，处理只能有一个视频播放
         XVideoViewManager.getInstance().setCurrentNiceVideoPlayer(this);
+       //初始化音频管理对象
+        initAudioManager();
         //初始化播放器
         initMediaPlayer();
         //初始化TextTureView控件
@@ -88,6 +92,20 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         //添加TextureView到容器中
         addTextureView();
     }
+
+
+    /**
+     * 初始化音频管理对象
+     */
+    private void initAudioManager() {
+        if (mAudioManager == null) {
+            //获取音频管理器
+            mAudioManager = (AudioManager) getContext().getSystemService(Context.AUDIO_SERVICE);//获取音频
+            //  请求音频的焦点
+            mAudioManager.requestAudioFocus(null, AudioManager.STREAM_MUSIC, AudioManager.AUDIOFOCUS_GAIN);
+        }
+    }
+
 
     //初始化播放器
     private void initMediaPlayer() {
@@ -272,6 +290,8 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return mCurrentState == Constants.STATE_COMPLETED;
     }
 
+
+//================================播放器播放显示模式================================================
     @Override
     public boolean isFullScreen() {
         return mCurrentMode == Constants.MODE_FULL_SCREEN;
@@ -287,10 +307,22 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return mCurrentMode == Constants.MODE_NORMAL;
     }
 
-    @Override
-    public FrameLayout getContainer() {
 
-        return mContainer;
+
+    //===================================播放器声音相关的=========================================================
+    @Override
+    public int getVolume() {
+        return mAudioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+    }
+
+    @Override
+    public int getMaxVolume() {
+        return mAudioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+    }
+
+    @Override
+    public void setVolume(int newVolume) {
+        mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
     }
 
 
@@ -536,5 +568,15 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     }
 
+    //================================其他========================================
 
+    /**
+     * 把容器返回去，这里需要处理小屏幕时候动态添加提示文字
+     * @return
+     */
+    @Override
+    public FrameLayout getContainer() {
+
+        return mContainer;
+    }
 }

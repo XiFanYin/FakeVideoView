@@ -6,6 +6,7 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.MotionEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.FrameLayout;
 
 import java.util.Timer;
@@ -14,6 +15,9 @@ import java.util.TimerTask;
 /**
  * Created by Administrator on 2018/4/17.
  * 这个类主要是后期处理手势触摸的基础类,同时还有规范方法名字的作用
+ * <p>
+ * <p>
+ * 明天任务： 1，网络状态提示  2，手势控制声音，亮度和进度  3，重力感应
  */
 
 public abstract class BaseController extends FrameLayout implements View.OnTouchListener {
@@ -29,6 +33,16 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     private CountDownTimer mDismissLockTimer;
     //屏幕锁是否已经上锁
     public boolean isLock = false;
+    private float mDownX;
+    private float mDownY;
+    private boolean mNeedChangePosition;
+    private boolean mNeedChangeVolume;
+    private boolean mNeedChangeBrightness;
+    private static final int THRESHOLD = 80;//临界值
+    private long mGestureDownPosition;//手指按下时候播放的位置
+    private float mGestureDownBrightness;//手指按下时候的亮度
+    private int mGestureDownVolume;
+    private long mNewPosition;
 
     public BaseController(@NonNull Context context) {
         super(context);
@@ -39,7 +53,8 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     /**
      * @param v
      * @param event
-     * @return 当返回值为true时当前点击事件被onTouch消耗掉，否则当前点击事件没有被onTouch消耗掉
+     * @return 当返回值为true时当前点击事件被onTouch消耗掉，子类的onClick将不会执行，
+     * 否则当前点击事件没有被onTouch消耗掉，子类的onClick将会执行
      */
     @Override
     public boolean onTouch(View v, MotionEvent event) {
@@ -51,31 +66,107 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
         if (isLock) {
             return false;
         }
+
+        //获取所在组件原点的x坐标
+        float x = event.getX();
+        float y = event.getY();
         //解析用户手势，
         switch (event.getAction()) {
 
             case MotionEvent.ACTION_DOWN://当按下的时候
 
+                mDownX = x;//获取按下位置的坐标位置记录一下
+                mDownY = y;
+                mNeedChangePosition = false;//设置声音亮度和进度都不需要改变
+                mNeedChangeVolume = false;
+                mNeedChangeBrightness = false;
                 break;
 
             case MotionEvent.ACTION_MOVE://当移动的时候
+                float deltaX = x - mDownX;//计算一下用户手指滑动的距离
+                float deltaY = y - mDownY;
+                float absDeltaX = Math.abs(deltaX);//把滑动位置转换成绝对值
+                float absDeltaY = Math.abs(deltaY);
+                //断定用户手势是准备做什么的时候
+                if (!mNeedChangePosition && !mNeedChangeVolume && !mNeedChangeBrightness) {
+                    // 只有在播放、暂停、缓冲的时候能够拖动改变位置、亮度和声音
+                    if (absDeltaX >= THRESHOLD) {//如果X方向超过了临界值
+                        cancelUpdateProgressTimer();//取消更新进度计时器
+                        mNeedChangePosition = true;//把用户判定为需要手势改变进度
+                        mGestureDownPosition = xVideoView.getCurrentPosition();//同事获取当前播放器的播放位置记录一下
+                    } else if (absDeltaY >= THRESHOLD) {//如果Y方向先超过了临界值
+                        if (mDownX < getWidth() * 0.5f) {//如果用户是滑动的左半边屏幕，判定用户想改变屏幕亮度，否则认为想改变声音
+                            // 左侧改变亮度
+                            mNeedChangeBrightness = true;
+                            mGestureDownBrightness = Utils.scanForActivity(mContext).getWindow().getAttributes().screenBrightness;//获取当前屏幕亮度记录一下
+                        } else {
+                            // 右侧改变声音
+                            mNeedChangeVolume = true;
+                            mGestureDownVolume = xVideoView.getVolume();//获取用户当前的声音值
+                        }
+                    }
+                }
+                    //如果需要改变亮度
+                if (mNeedChangeBrightness) {
+                    deltaY = -deltaY;//转换成反方向
+                    float deltaBrightness = deltaY * 3 / getHeight();
+                    float newBrightness = mGestureDownBrightness + deltaBrightness;
+                    newBrightness = Math.max(0, Math.min(newBrightness, 1));
+                    float newBrightnessPercentage = newBrightness;
+                    //设置新的亮度
+                    WindowManager.LayoutParams params = Utils.scanForActivity(mContext).getWindow().getAttributes();
+                    params.screenBrightness = newBrightnessPercentage;
+                    Utils.scanForActivity(mContext).getWindow().setAttributes(params);
 
+                    int newBrightnessProgress = (int) (100f * newBrightnessPercentage);
+                    showChangeBrightness(newBrightnessProgress);//调用改变亮度的Ui
+                }
+                if (mNeedChangePosition) {//如果需要改变播放进度
+                    long duration = xVideoView.getDuration();//获取当前视频的总时长
+                    long toPosition = (long) (mGestureDownPosition + duration * deltaX / getWidth());//计算一下需要滑动到的位置
+                    mNewPosition = Math.max(0, Math.min(duration, toPosition));//做一些容错处理
+                    int newPositionProgress = (int) (100f * mNewPosition / duration);//换算成移动到进度，取值0-100
+                    showChangePosition(duration, newPositionProgress);//调用改变进度的UI和播放器逻辑
+                }
 
+                if (mNeedChangeVolume) {//如果需要改变声音
+                    deltaY = -deltaY;
+                    int maxVolume = xVideoView.getMaxVolume();
+                    int deltaVolume = (int) (maxVolume * deltaY * 3 / getHeight());
+                    int newVolume = mGestureDownVolume + deltaVolume;
+                    newVolume = Math.max(0, Math.min(maxVolume, newVolume));
+                    xVideoView.setVolume(newVolume);//设置声音的变化
+                    int newVolumeProgress = (int) (100f * newVolume / maxVolume);
+                    showChangeVolume(newVolumeProgress);//调用改变声音的Ui
+                }
                 break;
 
 
             case MotionEvent.ACTION_UP://用户抬起手指或者是
-
-                break;
-
             case MotionEvent.ACTION_CANCEL://用户移除到屏幕外边的时候
 
+                if (mNeedChangePosition) {//如果是改变播放进度
+                    xVideoView.seekTo(mNewPosition);
+                    hideChangePosition();//抬起时候，去隐藏Ui
+                    startUpdateProgressTimer();//从新去设置定期器
+                    return true;
+                }
+                if (mNeedChangeBrightness) {
+                    hideChangeBrightness();//抬起时候，去隐藏Ui
+                    return true;
+                }
+                if (mNeedChangeVolume) {
+                    hideChangeVolume();//抬起时候，去隐藏Ui
+                    return true;
+                }
                 break;
         }
 
 
         return false;
     }
+
+
 
     /**
      * 对外提供设置播放器类对象的方法，让本类持有播放器类的对象，好调用播放器类的方法
@@ -251,9 +342,28 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     }
 
 
-
     /**
      * 重置控制器，将控制器恢复到初始状态。在列表时候
      */
     protected abstract void reset();
+
+
+
+    //================================和声音播放位置亮度有关的Ui======================================================
+
+    //改变亮度显示
+    protected abstract void showChangeBrightness(int newBrightnessProgress);
+    //改变亮度隐藏
+    protected abstract void hideChangeBrightness();
+
+    //改变位置
+    protected abstract void showChangePosition(long duration, int newPositionProgress);
+    //改变位置隐藏
+    protected abstract void hideChangePosition();
+
+
+    //改变声音显示
+    protected abstract void showChangeVolume(int newVolumeProgress);
+    //改变声音隐藏
+    protected abstract void hideChangeVolume();
 }
