@@ -17,8 +17,7 @@ public class SingleActivity  extends AppCompatActivity {
 
     private XVideoView xvideo_view;
     private String url1 = "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4";
-    private String url2 = "http://jzvd.nathen.cn/d2e969f2ec734520b46ab0965d2b68bd/f124edfef6c24be8b1a7b7f996ccc5e0-5287d2089db37e62345123a1be272f8b.mp4";
-    private String url3 = "http://ivi.bupt.edu.cn/hls/cctv1hd.m3u8";
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -28,23 +27,17 @@ public class SingleActivity  extends AppCompatActivity {
         QQBrowserController controller = new QQBrowserController(this);
         controller.setUrl(url1);
         controller.setTitle("视频1");
-        controller.getCover().setImageBitmap(Utils.getVideoThumbnail(url1));
+//        controller.getCover().setImageBitmap(Utils.getVideoThumbnail(url1));//这里会阻塞线程，需要处理
         xvideo_view.setController(controller);
-
+        xvideo_view.start();
     }
+
 
     @Override
     protected void onResume() {
         super.onResume();
         XVideoViewManager.getInstance().onResume();
     }
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-        XVideoViewManager.getInstance().onBackground();
-    }
-
 
     @Override
     protected void onDestroy() {

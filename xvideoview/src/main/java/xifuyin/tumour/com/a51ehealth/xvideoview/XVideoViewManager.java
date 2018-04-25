@@ -55,35 +55,38 @@ public class XVideoViewManager {
     }
 
     /**
-     * 当播放器处于播放状态点击了HOME键
+     * 当用户点击了Home键
      */
     public void onBackground() {
+
         if (mVideoPlayer != null && mVideoPlayer.isPlaying()) {
             mVideoPlayer.Pause();
-            isAuto = true;
-
         }
+
+        if (mVideoPlayer != null && mVideoPlayer.isTinyWindow()) {
+            mVideoPlayer.exitTinyWindow();
+        }
+
     }
 
     /**
-     * 当用户从HOME返回时候调用
+     * 当前界面从新获取焦点
      */
     public void onResume() {
-        if (mVideoPlayer != null && mVideoPlayer.isPaused() && isAuto) {
+        if (mVideoPlayer != null && mVideoPlayer.isPaused()) {
             mVideoPlayer.restart();
-            isAuto = false;
         }
+
     }
 
     /**
      * 如果只是退出播放器，而不是退出app的时候，只有再不是小屏的时候才释放掉播放器
      */
     public void onDestroy() {
-        if (mVideoPlayer != null) {
-            if (!mVideoPlayer.isTinyWindow()) {
-                releaseXVideoPlayer();
-            }
+        if (mVideoPlayer != null && !mVideoPlayer.isTinyWindow()) {
+            mVideoPlayer.release();
         }
+
     }
 
     /**
@@ -91,7 +94,10 @@ public class XVideoViewManager {
      */
     public void onExitApp() {
         if (mVideoPlayer != null) {
-            releaseXVideoPlayer();
+            if (mVideoPlayer.isTinyWindow()) {
+                mVideoPlayer.exitTinyWindow();
+            }
+            mVideoPlayer.release();
         }
 
     }

@@ -228,6 +228,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
             case Constants.STATE_PAUSED://用户点击了暂停按钮
                 center_start.setImageResource(R.drawable.video_mid_play_fullscreen);
+                center_start.setVisibility(VISIBLE);
                 restart_or_pause.setImageResource(R.drawable.video_play_wide);
                 cancelUpdateProgressTimer();//取消更新进度的方法，否则视频播放完成，更新进度的定时器还是会走，浪费cpu,这个是父类的方法
                 break;
