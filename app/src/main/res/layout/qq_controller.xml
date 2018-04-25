@@ -169,4 +169,120 @@
         android:indeterminateDrawable="@drawable/loading"
         android:visibility="gone" />
 
+
+    <!--改变播放位置-->
+    <LinearLayout
+        android:id="@+id/change_position"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_radius_4"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="8dp"
+        android:paddingLeft="22dp"
+        android:paddingRight="22dp"
+        android:paddingTop="8dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:id="@+id/fast_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/video_fast_back" />
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="10dp">
+
+            <TextView
+                android:id="@+id/fast_newPositionProgress"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00:00"
+                android:textColor="#ffffff"
+                android:textSize="11sp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=" / "
+                android:textColor="#999999"
+                android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/fast_duration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="00:00:00"
+                android:textColor="#999999"
+                android:textSize="11sp" />
+        </LinearLayout>
+
+    </LinearLayout>
+
+    <!--改变亮度-->
+    <LinearLayout
+        android:id="@+id/change_brightness"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_radius_4"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/video_brightness_hint" />
+
+        <ProgressBar
+            android:id="@+id/change_brightness_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="100dp"
+            android:layout_height="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="8dp"
+            android:max="100"
+            android:progressDrawable="@drawable/pb_change" />
+
+    </LinearLayout>
+    <!--改变声音-->
+    <LinearLayout
+        android:id="@+id/change_volume"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:background="@drawable/bg_radius_4"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:paddingBottom="10dp"
+        android:paddingLeft="18dp"
+        android:paddingRight="18dp"
+        android:paddingTop="10dp"
+        android:visibility="gone">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/video_sound_hint" />
+
+        <ProgressBar
+            android:id="@+id/change_volume_progress"
+            style="@android:style/Widget.ProgressBar.Horizontal"
+            android:layout_width="100dp"
+            android:layout_height="2dp"
+            android:layout_marginBottom="4dp"
+            android:layout_marginTop="10dp"
+            android:max="100"
+            android:progressDrawable="@drawable/pb_change" />
+
+    </LinearLayout>
+
 </RelativeLayout>

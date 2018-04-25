@@ -17,7 +17,7 @@ import java.util.TimerTask;
  * 这个类主要是后期处理手势触摸的基础类,同时还有规范方法名字的作用
  * <p>
  * <p>
- * 明天任务： 1，网络状态提示  2，手势控制声音，亮度和进度  3，重力感应
+ * 明天任务： 1，网络状态提示 3，重力感应
  */
 
 public abstract class BaseController extends FrameLayout implements View.OnTouchListener {
@@ -106,10 +106,10 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
                         }
                     }
                 }
-                    //如果需要改变亮度
+                //如果需要改变亮度
                 if (mNeedChangeBrightness) {
                     deltaY = -deltaY;//转换成反方向
-                    float deltaBrightness = deltaY * 3 / getHeight();
+                    float deltaBrightness = deltaY * 4 / getHeight();
                     float newBrightness = mGestureDownBrightness + deltaBrightness;
                     newBrightness = Math.max(0, Math.min(newBrightness, 1));
                     float newBrightnessPercentage = newBrightness;
@@ -121,18 +121,20 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
                     int newBrightnessProgress = (int) (100f * newBrightnessPercentage);
                     showChangeBrightness(newBrightnessProgress);//调用改变亮度的Ui
                 }
-                if (mNeedChangePosition) {//如果需要改变播放进度
+
+                //如果需要改变播放进度
+                if (mNeedChangePosition) {
                     long duration = xVideoView.getDuration();//获取当前视频的总时长
                     long toPosition = (long) (mGestureDownPosition + duration * deltaX / getWidth());//计算一下需要滑动到的位置
                     mNewPosition = Math.max(0, Math.min(duration, toPosition));//做一些容错处理
                     int newPositionProgress = (int) (100f * mNewPosition / duration);//换算成移动到进度，取值0-100
-                    showChangePosition(duration, newPositionProgress);//调用改变进度的UI和播放器逻辑
+                    showChangePosition(duration, newPositionProgress, deltaX > 0);//调用改变进度的UI和播放器逻辑
                 }
 
                 if (mNeedChangeVolume) {//如果需要改变声音
                     deltaY = -deltaY;
                     int maxVolume = xVideoView.getMaxVolume();
-                    int deltaVolume = (int) (maxVolume * deltaY * 3 / getHeight());
+                    int deltaVolume = (int) (maxVolume * deltaY * 4 / getHeight());
                     int newVolume = mGestureDownVolume + deltaVolume;
                     newVolume = Math.max(0, Math.min(maxVolume, newVolume));
                     xVideoView.setVolume(newVolume);//设置声音的变化
@@ -165,7 +167,6 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
 
         return false;
     }
-
 
 
     /**
@@ -348,22 +349,24 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     protected abstract void reset();
 
 
-
     //================================和声音播放位置亮度有关的Ui======================================================
 
     //改变亮度显示
     protected abstract void showChangeBrightness(int newBrightnessProgress);
+
     //改变亮度隐藏
     protected abstract void hideChangeBrightness();
 
     //改变位置
-    protected abstract void showChangePosition(long duration, int newPositionProgress);
+    protected abstract void showChangePosition(long duration, int newPositionProgress, boolean schedule);
+
     //改变位置隐藏
     protected abstract void hideChangePosition();
 
 
     //改变声音显示
     protected abstract void showChangeVolume(int newVolumeProgress);
+
     //改变声音隐藏
     protected abstract void hideChangeVolume();
 }

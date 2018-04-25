@@ -1,13 +1,10 @@
 package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
-import android.view.Menu;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.FrameLayout;
@@ -17,8 +14,6 @@ import android.widget.ProgressBar;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
-
-import org.w3c.dom.Text;
 
 /**
  * Created by Administrator on 2018/4/17.
@@ -45,7 +40,14 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     public ImageView center_start;
     private ProgressBar progress_bar;
     private TextView hintText;
-
+    private LinearLayout change_position;
+    public ImageView fast_image;
+    public TextView fast_newPositionProgress;
+    public TextView fast_duration;
+    public ProgressBar change_brightness_progress;
+    public LinearLayout change_brightness;
+    public ProgressBar change_volume_progress;
+    public LinearLayout change_volume;
 
     public QQBrowserController(@NonNull Context context) {
         super(context);
@@ -74,6 +76,14 @@ public class QQBrowserController extends BaseController implements View.OnClickL
         this.progress_bar = qq_controller.findViewById(R.id.progress_bar);
         this.position_full = qq_controller.findViewById(R.id.position_full);
         this.line = qq_controller.findViewById(R.id.line);
+        this.change_position = findViewById(R.id.change_position);
+        this.fast_image = findViewById(R.id.fast_image);
+        this.fast_newPositionProgress = findViewById(R.id.fast_newPositionProgress);
+        this.fast_duration = findViewById(R.id.fast_duration);
+        this.change_brightness_progress = findViewById(R.id.change_brightness_progress);
+        this.change_brightness = findViewById(R.id.change_brightness);
+        this.change_volume_progress = findViewById(R.id.change_volume_progress);
+        this.change_volume = findViewById(R.id.change_volume);
 
         //中心按钮的点击事件
         center_start.setOnClickListener(this);
@@ -268,7 +278,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
                 hintText = new TextView(mContext);
                 hintText.setText("当前视频正在小窗中播放");
                 hintText.setTextSize(14);
-                FrameLayout.LayoutParams textParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                LayoutParams textParams = new LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 textParams.gravity = Gravity.CENTER;
                 hintText.setTextColor(mContext.getResources().getColor(R.color.colorHint));
                 container2.addView(hintText, textParams);
@@ -310,7 +320,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     protected void updateProgress() {
         //获取播放器解析到的当前进度和整个视频长度，还有缓存进度
         long currentPosition = xVideoView.getCurrentPosition();
-        long durationPosition = xVideoView.getDuration()+1;
+        long durationPosition = xVideoView.getDuration() + 1;
         int bufferPercentage = xVideoView.getBufferPercentage();
         //设置数据到控件
         position.setText(Utils.formatTime(currentPosition));
@@ -399,7 +409,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     }
 
 
-
     //==============================================底部进度条拖动的回调=========================================================
     @Override
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
@@ -421,40 +430,42 @@ public class QQBrowserController extends BaseController implements View.OnClickL
     //=========================================和手势有关的声音，亮度，和进度的改变调用对应的方法=====================================================
 
 
-
     @Override
-    protected void showChangeBrightness(int newBrightnessProgress) {
-
-    }
-
-    @Override
-    protected void hideChangeBrightness() {
-
-    }
-
-    @Override
-    protected void showChangePosition(long duration, int newPositionProgress) {
-
+    protected void showChangePosition(long duration, int newPositionProgress, boolean schedule) {
+        change_position.setVisibility(VISIBLE);
+        fast_image.setImageResource(schedule ? R.drawable.video_fast_forward : R.drawable.video_fast_back);
+        long newPosition = (long) (duration * newPositionProgress / 100f);
+        fast_newPositionProgress.setText(Utils.formatTime(newPosition));
+        fast_duration.setText(Utils.formatTime(duration));
     }
 
     @Override
     protected void hideChangePosition() {
-
+        change_position.setVisibility(GONE);
     }
+
 
     @Override
     protected void showChangeVolume(int newVolumeProgress) {
-
+        change_volume.setVisibility(View.VISIBLE);
+        change_volume_progress.setProgress(newVolumeProgress);
     }
 
     @Override
     protected void hideChangeVolume() {
-
+        change_volume.setVisibility(View.GONE);
     }
 
+    @Override
+    protected void showChangeBrightness(int newBrightnessProgress) {
+        change_brightness.setVisibility(View.VISIBLE);
+        change_brightness_progress.setProgress(newBrightnessProgress);
+    }
 
-
-
+    @Override
+    protected void hideChangeBrightness() {
+        change_brightness.setVisibility(View.GONE);
+    }
 
 
     //============================对外暴漏的方法，设置视频名称的方法==================================
@@ -467,4 +478,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         return cover;
     }
+
+
 }
