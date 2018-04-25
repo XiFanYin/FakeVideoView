@@ -43,6 +43,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private int mCurrentMode = Constants.MODE_NORMAL;
     private Surface surface;
     private AudioManager mAudioManager;
+    private boolean ActivityIsDestroy = false;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -81,7 +82,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     public void start() {
         //记录当前创建的播放器，处理只能有一个视频播放
         XVideoViewManager.getInstance().setCurrentNiceVideoPlayer(this);
-       //初始化音频管理对象
+        //初始化音频管理对象
         initAudioManager();
         //初始化播放器
         initMediaPlayer();
@@ -289,7 +290,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     }
 
 
-//================================播放器播放显示模式================================================
+    //================================播放器播放显示模式================================================
     @Override
     public boolean isFullScreen() {
         return mCurrentMode == Constants.MODE_FULL_SCREEN;
@@ -306,7 +307,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     }
 
 
-
     //===================================播放器声音相关的=========================================================
     @Override
     public int getVolume() {
@@ -321,6 +321,11 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public void setVolume(int newVolume) {
         mAudioManager.setStreamVolume(AudioManager.STREAM_MUSIC, newVolume, 0);
+    }
+
+    @Override
+    public void setPlayerActivityIsDestroy(boolean b) {
+        this.ActivityIsDestroy = b;
     }
 
 
@@ -473,14 +478,26 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                 .setOnClickListener(new FloatWindow.OnClickListener() {
                     @Override
                     public void onTinyClick() {
+
                         FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
-                        addTextureView();
-                        enterFullScreen();
+
+                        if (ActivityIsDestroy) {//表示页面已经关闭，小屏幕也点了关闭，播放器你需要释放掉
+                            release();
+                        } else {
+                            addTextureView();
+                            enterFullScreen();
+                        }
+
                     }
 
                     @Override
                     public void onCloseClick() {
-                        exitTinyWindow();
+
+                        if (ActivityIsDestroy) {//表示页面已经关闭，小屏幕也点了关闭，播放器你需要释放掉
+                            release();
+                        } else {
+                            exitTinyWindow();
+                        }
                     }
                 });
 
@@ -570,6 +587,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     /**
      * 把容器返回去，这里需要处理小屏幕时候动态添加提示文字
+     *
      * @return
      */
     @Override

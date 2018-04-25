@@ -12,7 +12,6 @@ public class XVideoViewManager {
     //播放器成员变量
     private IXVideoView mVideoPlayer;
 
-    private boolean isAuto = false;//让视频暂停是来自用户还是来返回到后台自动暂停的标记
 
     //构造方法
     private XVideoViewManager() {
@@ -85,6 +84,8 @@ public class XVideoViewManager {
     public void onDestroy() {
         if (mVideoPlayer != null && !mVideoPlayer.isTinyWindow()) {
             mVideoPlayer.release();
+        } else {
+            mVideoPlayer.setPlayerActivityIsDestroy(true);
         }
 
     }
