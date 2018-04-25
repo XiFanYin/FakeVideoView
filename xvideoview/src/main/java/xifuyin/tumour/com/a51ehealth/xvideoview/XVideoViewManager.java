@@ -56,7 +56,6 @@ public class XVideoViewManager {
 
     /**
      * 当播放器处于播放状态点击了HOME键
-     *
      */
     public void onBackground() {
         if (mVideoPlayer != null && mVideoPlayer.isPlaying()) {
@@ -68,7 +67,6 @@ public class XVideoViewManager {
 
     /**
      * 当用户从HOME返回时候调用
-     *
      */
     public void onResume() {
         if (mVideoPlayer != null && mVideoPlayer.isPaused() && isAuto) {
@@ -78,16 +76,25 @@ public class XVideoViewManager {
     }
 
     /**
-     * 退出屏幕状态为默认，释放掉播放器
+     * 如果只是退出播放器，而不是退出app的时候，只有再不是小屏的时候才释放掉播放器
      */
     public void onDestroy() {
         if (mVideoPlayer != null) {
-            if (mVideoPlayer.isFullScreen()) {
-                mVideoPlayer.exitFullScreen();
-            } else if (mVideoPlayer.isTinyWindow()) {
-                mVideoPlayer.exitTinyWindow();
+            if (!mVideoPlayer.isTinyWindow()) {
+                releaseXVideoPlayer();
             }
         }
-        releaseXVideoPlayer();
     }
+
+    /**
+     * App退出之后，直接释放掉播放器，不管是什么状态
+     */
+    public void onExitApp() {
+        if (mVideoPlayer != null) {
+            releaseXVideoPlayer();
+        }
+
+    }
+
+
 }

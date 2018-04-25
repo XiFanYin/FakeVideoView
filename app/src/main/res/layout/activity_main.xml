@@ -6,20 +6,27 @@
     android:orientation="vertical"
     tools:context="xifuyin.tumour.com.a51ehealth.fakevideoview.MainActivity">
 
-    <xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView
-        android:id="@+id/xvideo_view"
+
+    <Button
+        android:id="@+id/btn1"
         android:layout_width="match_parent"
-        android:layout_height="300dp">
+        android:text="单个页面，单个播放器"
+        android:layout_height="wrap_content" />
 
-    </xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView>
 
 
-    <xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView
-        android:id="@+id/xvideo_view2"
+    <Button
+        android:id="@+id/btn2"
         android:layout_width="match_parent"
-        android:layout_height="180dp"
-        android:layout_marginTop="15dp">
+        android:text="视频列表，点击进单个播放器去播放"
+        android:layout_height="wrap_content" />
 
-    </xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView>
+    <Button
+        android:id="@+id/btn3"
+        android:layout_width="match_parent"
+        android:text="视频列表中直接去播放"
+        android:layout_height="wrap_content" />
+
+
 
 </LinearLayout>
