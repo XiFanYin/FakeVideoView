@@ -2,10 +2,12 @@ package xifuyin.tumour.com.a51ehealth.fakevideoview;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
+
+import xifuyin.tumour.com.a51ehealth.xvideoview.QQBrowserController;
+import xifuyin.tumour.com.a51ehealth.xvideoview.Utils;
+import xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView;
+import xifuyin.tumour.com.a51ehealth.xvideoview.XVideoViewManager;
+
 
 public class MainActivity extends AppCompatActivity {
 

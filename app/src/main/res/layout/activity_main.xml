@@ -6,20 +6,20 @@
     android:orientation="vertical"
     tools:context="xifuyin.tumour.com.a51ehealth.fakevideoview.MainActivity">
 
-    <xifuyin.tumour.com.a51ehealth.fakevideoview.XVideoView
+    <xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView
         android:id="@+id/xvideo_view"
         android:layout_width="match_parent"
         android:layout_height="300dp">
 
-    </xifuyin.tumour.com.a51ehealth.fakevideoview.XVideoView>
+    </xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView>
 
 
-    <xifuyin.tumour.com.a51ehealth.fakevideoview.XVideoView
+    <xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView
         android:id="@+id/xvideo_view2"
         android:layout_width="match_parent"
         android:layout_height="180dp"
         android:layout_marginTop="15dp">
 
-    </xifuyin.tumour.com.a51ehealth.fakevideoview.XVideoView>
+    </xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView>
 
 </LinearLayout>
