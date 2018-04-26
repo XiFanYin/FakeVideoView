@@ -286,25 +286,6 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
 
     //===================================和url有关的=============================================
 
-    /**
-     * 设置视频播放的url
-     *
-     * @param url
-     */
-    public void setUrl(String url) {
-
-        this.url = url;
-    }
-
-    ;
-
-    /**
-     * 获取视频播放的url
-     */
-    public String getUrl() {
-
-        return url;
-    }
 
 
     //==============================================和锁显示隐藏有关的定时器=======================================

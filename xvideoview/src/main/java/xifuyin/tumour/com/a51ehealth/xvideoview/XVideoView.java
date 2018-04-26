@@ -45,6 +45,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private AudioManager mAudioManager;
     private boolean ActivityIsDestroy = false;
     private long historyPosition;
+    private String url;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -181,7 +182,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);//设置视频流
         try {
-            mediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(mController.getUrl()));//设置视频播放地址
+            mediaPlayer.setDataSource(mContext.getApplicationContext(), Uri.parse(url));//设置视频播放地址
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -606,6 +607,16 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     }
 
+    @Override
+    public String getUrl() {
+        return this.url;
+    }
+
+    @Override
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     //================================其他========================================
 
     /**
@@ -619,15 +630,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return mContainer;
     }
 
-    /**
-     * 返回播放器的Url
-     *
-     * @return
-     */
-    @Override
-    public String getUrl() {
-        return mController.getUrl();
-    }
 
     @Override
     public void setHistoryPosition(long historyPosition) {
