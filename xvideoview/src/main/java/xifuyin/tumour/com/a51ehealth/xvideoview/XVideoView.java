@@ -168,12 +168,15 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     //播放视频的一系列准备工作
     private void openMediaPlayer() {
+        //常亮
+        mediaPlayer.setScreenOnWhilePlaying(true);
         //设置监听
         mediaPlayer.setOnPreparedListener(onPrepared());//设置准备完成监听
         mediaPlayer.setOnVideoSizeChangedListener(onVideoSizeChanged());//当视频大小改变的时候
         mediaPlayer.setOnInfoListener(onInfo());//视频加载信息监听回调
         mediaPlayer.setOnCompletionListener(onCompletion());//视频完成播放时候监听
         mediaPlayer.setOnBufferingUpdateListener(onBufferingUpdate());//视频缓存信息监听,显示在底部进度条的第二图层中
+        mediaPlayer.setOnSeekCompleteListener(onSeekComplete());//设置视频播放完成
         //创建Surface对象，让mediaPlayer通过Surface 和mSurfaceTexture与TextureView关联起来
         surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);//设置视频流
@@ -209,8 +212,10 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
             public void onPrepared(IMediaPlayer iMediaPlayer) {
                 if (historyPosition > 0) {
                     iMediaPlayer.seekTo(historyPosition);
+                } else {
+                    iMediaPlayer.start();//开始播放视频
                 }
-                iMediaPlayer.start();//开始播放视频
+
                 mCurrentState = Constants.STATE_PREPARED;//播放准备就绪
                 mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
             }
@@ -261,6 +266,18 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
             }
         };
     }
+
+    //播放器拖动完成监听
+    @NonNull
+    private IMediaPlayer.OnSeekCompleteListener onSeekComplete() {
+        return new IMediaPlayer.OnSeekCompleteListener() {
+            @Override
+            public void onSeekComplete(IMediaPlayer iMediaPlayer) {
+                iMediaPlayer.start();
+            }
+        };
+    }
+
 
     //===========================================播放器状态判断==============================================================
     //播放器是否处于默认状态，第一次播放状态
