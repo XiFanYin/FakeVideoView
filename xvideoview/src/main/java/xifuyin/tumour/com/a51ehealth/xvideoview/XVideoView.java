@@ -44,6 +44,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     private Surface surface;
     private AudioManager mAudioManager;
     private boolean ActivityIsDestroy = false;
+    private long historyPosition;
 
     public XVideoView(@NonNull Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
@@ -206,6 +207,9 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
+                if (historyPosition > 0) {
+                    iMediaPlayer.seekTo(historyPosition);
+                }
                 iMediaPlayer.start();//开始播放视频
                 mCurrentState = Constants.STATE_PREPARED;//播放准备就绪
                 mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
@@ -402,6 +406,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     //返回视频播放的当前进度
     @Override
     public long getCurrentPosition() {
+
         return mediaPlayer.getCurrentPosition();
     }
 
@@ -482,7 +487,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                         FloatWindow.getInstance(mContext.getApplicationContext()).dismass();
 
                         if (ActivityIsDestroy) {//表示页面已经关闭，小屏幕也点了关闭，播放器你需要释放掉
-                            release();
+                            XVideoViewManager.getInstance().releaseXVideoPlayer();
                         } else {
                             addTextureView();
                             enterFullScreen();
@@ -494,7 +499,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                     public void onCloseClick() {
 
                         if (ActivityIsDestroy) {//表示页面已经关闭，小屏幕也点了关闭，播放器你需要释放掉
-                            release();
+                            XVideoViewManager.getInstance().releaseXVideoPlayer();
                         } else {
                             exitTinyWindow();
                         }
@@ -595,4 +600,21 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
         return mContainer;
     }
+
+    /**
+     * 返回播放器的Url
+     *
+     * @return
+     */
+    @Override
+    public String getUrl() {
+        return mController.getUrl();
+    }
+
+    @Override
+    public void setHistoryPosition(long historyPosition) {
+        this.historyPosition = historyPosition;
+    }
+
+
 }

@@ -118,4 +118,8 @@ public interface IXVideoView {
     //======================================当视频播放器页面已经关闭时候，告诉播放器，播放页面Activity已经关闭，点击小屏幕的关闭按钮，需要直接释放掉播放器==============================================
 
     void setPlayerActivityIsDestroy(boolean b);
+
+    String getUrl();
+
+    void setHistoryPosition(long currentPosition);
 }

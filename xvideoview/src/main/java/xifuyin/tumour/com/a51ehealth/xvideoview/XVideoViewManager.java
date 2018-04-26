@@ -35,6 +35,12 @@ public class XVideoViewManager {
     //创建好的播放器设置到当前管理类中，记录下来，
     public void setCurrentNiceVideoPlayer(IXVideoView videoPlayer) {
         if (mVideoPlayer != videoPlayer) {
+            if (mVideoPlayer != null && videoPlayer != null) {
+                //表示是和上一次播放的url是通一个url
+                if (mVideoPlayer.getUrl().equals(videoPlayer.getUrl())) {
+                    videoPlayer.setHistoryPosition(mVideoPlayer.getCurrentPosition());
+                }
+            }
             // 如果播放器不等于之前的播放器，直接释放掉之前的播放器
             releaseXVideoPlayer();
             //同时，让新传入的播放器，记录下来
@@ -83,7 +89,7 @@ public class XVideoViewManager {
      */
     public void onDestroy() {
         if (mVideoPlayer != null && !mVideoPlayer.isTinyWindow()) {
-            mVideoPlayer.release();
+           releaseXVideoPlayer();
         } else {
             mVideoPlayer.setPlayerActivityIsDestroy(true);
         }
@@ -98,7 +104,7 @@ public class XVideoViewManager {
             if (mVideoPlayer.isTinyWindow()) {
                 mVideoPlayer.exitTinyWindow();
             }
-            mVideoPlayer.release();
+            releaseXVideoPlayer();
         }
 
     }
