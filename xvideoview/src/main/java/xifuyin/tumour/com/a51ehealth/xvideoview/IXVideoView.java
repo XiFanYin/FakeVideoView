@@ -71,7 +71,7 @@ public interface IXVideoView {
     /**
      * 进入全屏
      */
-    void enterFullScreen();
+    void enterFullScreen(int ORIENTATION);
 
     /**
      * 退出全屏
@@ -115,11 +115,14 @@ public interface IXVideoView {
     void setVolume(int newVolume);
 
 
-    //======================================当视频播放器页面已经关闭时候，告诉播放器，播放页面Activity已经关闭，点击小屏幕的关闭按钮，需要直接释放掉播放器==============================================
-
+    //====================================================================================
+   // 当视频播放器页面已经关闭时候，告诉播放器，播放页面Activity已经关闭，点击小屏幕的关闭按钮，需要直接释放掉播放器
     void setPlayerActivityIsDestroy(boolean b);
 
+    //获取url，这里是为了处理上一个视频和下一个视频是同一个视频时候，让用户不用快进播放，通过对比url
     String getUrl();
-
+    //记录上一个视频播放位置，这是在小屏幕时候又点击了同一个视频记录当前小屏幕播放位置，告诉新的播放器用的
     void setHistoryPosition(long currentPosition);
+    //获取当前视频图层是否已经被锁，如果被锁，重力感应失效
+    boolean isLock();
 }

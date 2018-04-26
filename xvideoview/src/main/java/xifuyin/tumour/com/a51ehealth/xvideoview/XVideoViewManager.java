@@ -1,5 +1,7 @@
 package xifuyin.tumour.com.a51ehealth.xvideoview;
 
+import android.content.Context;
+
 /**
  * Created by Administrator on 2018/4/24.
  * <p>
@@ -11,6 +13,7 @@ public class XVideoViewManager {
     private static XVideoViewManager mInstance;
     //播放器成员变量
     private IXVideoView mVideoPlayer;
+    private OrientationUtils orientationUtils;
 
 
     //构造方法
@@ -77,11 +80,12 @@ public class XVideoViewManager {
     /**
      * 当前界面从新获取焦点
      */
-    public void onResume() {
+    public void onResume(Context mContext) {
         if (mVideoPlayer != null && mVideoPlayer.isPaused()) {
             mVideoPlayer.restart();
         }
-
+        orientationUtils = new OrientationUtils(mContext, mVideoPlayer);
+        orientationUtils.enable();
     }
 
     /**
@@ -89,11 +93,11 @@ public class XVideoViewManager {
      */
     public void onDestroy() {
         if (mVideoPlayer != null && !mVideoPlayer.isTinyWindow()) {
-           releaseXVideoPlayer();
+            releaseXVideoPlayer();
         } else {
             mVideoPlayer.setPlayerActivityIsDestroy(true);
         }
-
+        orientationUtils.disable();
     }
 
     /**

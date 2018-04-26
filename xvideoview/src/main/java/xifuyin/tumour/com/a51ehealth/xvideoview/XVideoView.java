@@ -507,7 +507,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
                             XVideoViewManager.getInstance().releaseXVideoPlayer();
                         } else {
                             addTextureView();
-                            enterFullScreen();
+                            enterFullScreen(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
                         }
 
                     }
@@ -542,7 +542,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
      */
     @SuppressLint("RestrictedApi")
     @Override
-    public void enterFullScreen() {
+    public void enterFullScreen(int ORIENTATION) {
         //隐藏状态栏
         Utils.scanForActivity(mContext)
                 .getWindow()
@@ -554,8 +554,9 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
             ab.setShowHideAnimationEnabled(false);//取消隐藏动画
             ab.hide();
         }
+
         //设置屏幕为横屏显示
-        Utils.scanForActivity(mContext).setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
+        Utils.scanForActivity(mContext).setRequestedOrientation(ORIENTATION);
         //  每个Activity里面都有一个android.R.content，它是一个FrameLayout，
         // 里面包含了我们setContentView的所有控件。既然它是一个FrameLayout，我们就可以将它作为全屏的目标视图。
         //获取目标视图
@@ -631,6 +632,11 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     @Override
     public void setHistoryPosition(long historyPosition) {
         this.historyPosition = historyPosition;
+    }
+
+    @Override
+    public boolean isLock() {
+        return mController.isLock;
     }
 
 

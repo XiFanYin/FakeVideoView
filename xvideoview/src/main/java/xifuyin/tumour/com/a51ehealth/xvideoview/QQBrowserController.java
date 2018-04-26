@@ -1,6 +1,7 @@
 package xifuyin.tumour.com.a51ehealth.xvideoview;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
 import android.support.annotation.NonNull;
 import android.util.Log;
 import android.view.Gravity;
@@ -164,7 +165,7 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
         } else if (v == full_screen) {//全屏被点击
 
-            xVideoView.enterFullScreen();
+            xVideoView.enterFullScreen(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
             if (xVideoView.isPlaying()) {
                 topBottomVisible = true;
             } else {
