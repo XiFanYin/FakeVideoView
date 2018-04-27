@@ -58,7 +58,7 @@ public class XVideoViewManager {
     public void releaseXVideoPlayer() {
         if (mVideoPlayer != null) {
             mVideoPlayer.release();
-            mVideoPlayer = null;
+            mVideoPlayer=null;
         }
     }
 

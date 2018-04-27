@@ -410,7 +410,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         //移除掉mTextureView
         mContainer.removeView(mTextureView);
         mTextureView = null;
-
         Runtime.getRuntime().gc();
     }
 
@@ -614,6 +613,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     @Override
     public void setUrl(String url) {
+        XVideoViewManager.getInstance().releaseXVideoPlayer();
         this.url = url;
     }
 
