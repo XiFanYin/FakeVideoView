@@ -142,11 +142,11 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     //===============================texttureView.setSurfaceTextureListener(this)回调======================================================
     @Override
     public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int width, int height) {
-        if (mSurfaceTexture == null) {
+        if (mSurfaceTexture == null) {//如果为null，赋值
             mSurfaceTexture = surfaceTexture;//把mSurfaceTexture变成成员变量,解决切换大小屏幕时候，视频不显示问题
             openMediaPlayer();
         } else {
-            mTextureView.setSurfaceTexture(mSurfaceTexture);
+            mTextureView.setSurfaceTexture(mSurfaceTexture);//如果不为null，直接设置进去
         }
 
     }
@@ -177,7 +177,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         mediaPlayer.setOnInfoListener(onInfo());//视频加载信息监听回调
         mediaPlayer.setOnCompletionListener(onCompletion());//视频完成播放时候监听
         mediaPlayer.setOnBufferingUpdateListener(onBufferingUpdate());//视频缓存信息监听,显示在底部进度条的第二图层中
-        mediaPlayer.setOnSeekCompleteListener(onSeekComplete());//设置视频播放完成
+        mediaPlayer.setOnSeekCompleteListener(onSeekComplete());//设置拖动完成监听
         //创建Surface对象，让mediaPlayer通过Surface 和mSurfaceTexture与TextureView关联起来
         surface = new Surface(mSurfaceTexture);
         mediaPlayer.setSurface(surface);//设置视频流
@@ -211,7 +211,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return new IMediaPlayer.OnPreparedListener() {
             @Override
             public void onPrepared(IMediaPlayer iMediaPlayer) {
-                if (historyPosition > 0) {
+                if (historyPosition > 0) {//处理当前的同一个视频时候定位问题
                     iMediaPlayer.seekTo(historyPosition);
                 } else {
                     iMediaPlayer.start();//开始播放视频
@@ -370,7 +370,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         mController.onPlayStateChanged(mCurrentState);//更新控制器为正在准备状态
     }
 
-    //释放掉播放器状态
+    //=============================释放掉播放器状态================================================
     @Override
     public void release() {
         // 如果是全屏，就退出全屏
@@ -613,6 +613,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
 
     @Override
     public void setUrl(String url) {
+        //这里如果之前的播放器不是null，直接释放掉播放器
         XVideoViewManager.getInstance().releaseXVideoPlayer();
         this.url = url;
     }

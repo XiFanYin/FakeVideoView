@@ -66,11 +66,11 @@ public class XVideoViewManager {
      * 当用户点击了Home键
      */
     public void onBackground() {
-
+        //如果App不等于null，并且正在播放中，让播放器暂停
         if (mVideoPlayer != null && mVideoPlayer.isPlaying()) {
             mVideoPlayer.Pause();
         }
-
+        //如果是小屏，退出小屏
         if (mVideoPlayer != null && mVideoPlayer.isTinyWindow()) {
             mVideoPlayer.exitTinyWindow();
         }
@@ -81,9 +81,11 @@ public class XVideoViewManager {
      * 当前界面从新获取焦点
      */
     public void onResume(Context mContext) {
+        //如果播放器处于暂停状态，，让播放器从新播放视频
         if (mVideoPlayer != null && mVideoPlayer.isPaused()) {
             mVideoPlayer.restart();
         }
+        //开启重力感应工具类
         orientationUtils = new OrientationUtils(mContext, mVideoPlayer);
         orientationUtils.enable();
     }
@@ -92,11 +94,13 @@ public class XVideoViewManager {
      * 如果只是退出播放器，而不是退出app的时候，只有再不是小屏的时候才释放掉播放器
      */
     public void onDestroy() {
+        //如果当前播放页面关闭，并且播放器不处于Tiny模式，直接释放掉
         if (mVideoPlayer != null && !mVideoPlayer.isTinyWindow()) {
             releaseXVideoPlayer();
         } else {
-            mVideoPlayer.setPlayerActivityIsDestroy(true);
+            mVideoPlayer.setPlayerActivityIsDestroy(true);//否则告诉当前自定义播放器，对应的Activity已经关闭
         }
+        //关闭重力感应工具类
         orientationUtils.disable();
     }
 
@@ -104,6 +108,7 @@ public class XVideoViewManager {
      * App退出之后，直接释放掉播放器，不管是什么状态
      */
     public void onExitApp() {
+        //如果播放器不等于null，直接让播放器释放掉 ， 如果播放器处于Tiny模式，退出这个模式
         if (mVideoPlayer != null) {
             if (mVideoPlayer.isTinyWindow()) {
                 mVideoPlayer.exitTinyWindow();

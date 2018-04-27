@@ -11,7 +11,8 @@ import xifuyin.tumour.com.a51ehealth.xvideoview.XVideoViewManager;
 
 /**
  * Created by Administrator on 2018/4/25.
- * <p>
+ * 明天任务，写一下注释，
+ * 实现Button的几种需求
  *
  */
 
@@ -25,12 +26,14 @@ public class SingleActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_single);
 
-        xvideo_view = findViewById(R.id.xvideo_view);
-        QQBrowserController controller = new QQBrowserController(this);
-        controller.setTitle("视频1");
-        xvideo_view.setController(controller);
+        xvideo_view = findViewById(R.id.xvideo_view);//初始化了一个容器，把容器添加到控件
+        QQBrowserController controller = new QQBrowserController(this);//初始化了一个布局，设置了点击事件和拖动事件
+        controller.setTitle("视频1");//设置视频名字，全屏的时候显示
+        xvideo_view.setController(controller);//让自定义播放器持有控制器对象，同时让控制器持有播放器对象，同时把控制器添加到自定义控件中
         xvideo_view.setUrl(url1);
         xvideo_view.start();
+
+
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {

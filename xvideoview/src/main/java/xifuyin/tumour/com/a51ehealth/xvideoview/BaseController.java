@@ -49,6 +49,8 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
         this.setOnTouchListener(this);//注册当前控制器的触摸事件
     }
 
+
+    //================================和声音播放位置亮度有关的Ui======================================================
     /**
      * @param v
      * @param event
@@ -167,6 +169,24 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
         return false;
     }
 
+    //改变亮度显示
+    protected abstract void showChangeBrightness(int newBrightnessProgress);
+
+    //改变亮度隐藏
+    protected abstract void hideChangeBrightness();
+
+    //改变位置
+    protected abstract void showChangePosition(long duration, int newPositionProgress, boolean schedule);
+
+    //改变位置隐藏
+    protected abstract void hideChangePosition();
+
+
+    //改变声音显示
+    protected abstract void showChangeVolume(int newVolumeProgress);
+
+    //改变声音隐藏
+    protected abstract void hideChangeVolume();
 
     /**
      * 对外提供设置播放器类对象的方法，让本类持有播放器类的对象，好调用播放器类的方法
@@ -182,6 +202,13 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
 
     //根据播放器的显示模式去更新控制器Ui的显示
     public abstract void onPlayModeChanged(int Mode);
+
+
+
+    /**
+     * 重置控制器，将控制器恢复到初始状态。在列表时候
+     */
+    protected abstract void reset();
 
 //===============================================和进度有关的逻辑======================================================
 
@@ -278,13 +305,8 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
      */
     abstract void setCenterImageViesible(boolean visible);
 
-    /**
-     * 锁屏按钮显示和隐藏
-     */
-    abstract void setLockImageViesible(boolean visible);
 
 
-    //===================================和url有关的=============================================
 
 
 
@@ -322,31 +344,14 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
         }
     }
 
-
     /**
-     * 重置控制器，将控制器恢复到初始状态。在列表时候
+     * 锁屏按钮显示和隐藏
      */
-    protected abstract void reset();
+    abstract void setLockImageViesible(boolean visible);
 
 
-    //================================和声音播放位置亮度有关的Ui======================================================
-
-    //改变亮度显示
-    protected abstract void showChangeBrightness(int newBrightnessProgress);
-
-    //改变亮度隐藏
-    protected abstract void hideChangeBrightness();
-
-    //改变位置
-    protected abstract void showChangePosition(long duration, int newPositionProgress, boolean schedule);
-
-    //改变位置隐藏
-    protected abstract void hideChangePosition();
 
 
-    //改变声音显示
-    protected abstract void showChangeVolume(int newVolumeProgress);
 
-    //改变声音隐藏
-    protected abstract void hideChangeVolume();
+
 }

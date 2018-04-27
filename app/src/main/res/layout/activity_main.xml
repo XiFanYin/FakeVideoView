@@ -10,23 +10,41 @@
     <Button
         android:id="@+id/btn1"
         android:layout_width="match_parent"
-        android:text="单个页面，单个播放器"
+        android:text="单个Activity页面，单个播放器，点击到下一集播放"
         android:layout_height="wrap_content" />
-
-
 
     <Button
         android:id="@+id/btn2"
         android:layout_width="match_parent"
-        android:text="视频列表，点击进单个播放器去播放"
+        android:text="单个Fragment页面，单个播放器，点击到下一集播放"
         android:layout_height="wrap_content" />
+
+
 
     <Button
         android:id="@+id/btn3"
         android:layout_width="match_parent"
-        android:text="视频列表中直接去播放"
+        android:text="Activity视频列表，点击进单个播放器去播放"
         android:layout_height="wrap_content" />
 
 
+    <Button
+        android:id="@+id/btn4"
+        android:layout_width="match_parent"
+        android:text="Fragment视频列表，点击进单个播放器去播放"
+        android:layout_height="wrap_content" />
+
+
+    <Button
+        android:id="@+id/btn5"
+        android:layout_width="match_parent"
+        android:text="Activity视频列表中直接去播放"
+        android:layout_height="wrap_content" />
+
+    <Button
+        android:id="@+id/btn6"
+        android:layout_width="match_parent"
+        android:text="Fragment视频列表中直接去播放"
+        android:layout_height="wrap_content" />
 
 </LinearLayout>

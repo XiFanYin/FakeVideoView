@@ -20,11 +20,9 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-
         // 注册广播，监听用户点击了Home键
         registerHomeKeyReceiver();
-
+        //点击事件
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,14 +31,14 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
+        //点击事件
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
 
             }
         });
-
+        //点击事件
         findViewById(R.id.btn3).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -50,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
 
 
     }
-
+    // 注册广播，监听用户点击了Home键
     private void registerHomeKeyReceiver() {
         mReceiver = new HomeKeyBroadCastReceiver();
         registerReceiver(mReceiver, new IntentFilter(Intent.ACTION_CLOSE_SYSTEM_DIALOGS));
@@ -60,7 +58,7 @@ public class MainActivity extends AppCompatActivity {
     public class HomeKeyBroadCastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
-
+            //这里调用播放器管理类，告诉播放器，app处于后台
             XVideoViewManager.getInstance().onBackground();
 
         }
@@ -70,8 +68,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(mReceiver);
-        XVideoViewManager.getInstance().onExitApp();
+        unregisterReceiver(mReceiver);//整个app退出的时候，取消home广播
+        XVideoViewManager.getInstance().onExitApp();//调用退出整个App的代码
     }
 
 
