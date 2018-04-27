@@ -413,6 +413,7 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         Runtime.getRuntime().gc();
     }
 
+//==============================和底部进度有关的=====================================
 
     //返回视频的总长度
     @Override
@@ -443,7 +444,6 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     //==============================================视频进入悬浮窗退出悬浮窗模式=========================================================
     @Override
     public void enterFloatWindow() {
-
         permission();
     }
 

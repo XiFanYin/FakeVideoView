@@ -240,8 +240,6 @@ public class QQBrowserController extends BaseController implements View.OnClickL
                 reset();
                 cover.setVisibility(VISIBLE);
 
-                Log.e("rrrrrrrrrrrrr", "STATE_COMPLETED");
-
                 break;
 
 
