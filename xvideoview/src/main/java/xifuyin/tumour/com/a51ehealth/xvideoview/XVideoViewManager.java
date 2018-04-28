@@ -16,7 +16,6 @@ public class XVideoViewManager {
     private OrientationUtils orientationUtils;
 
 
-
     //构造方法
     private XVideoViewManager() {
     }
@@ -103,7 +102,9 @@ public class XVideoViewManager {
         if (mVideoPlayer != null && !mVideoPlayer.isTinyWindow()) {
             releaseXVideoPlayer();
         } else {
-            mVideoPlayer.setPlayerActivityIsDestroy(true);//否则告诉当前自定义播放器，对应的Activity已经关闭
+            if (mVideoPlayer != null) {
+                mVideoPlayer.setPlayerActivityIsDestroy(true);//否则告诉当前自定义播放器，对应的Activity已经关闭
+            }
         }
         //关闭重力感应工具类
         orientationUtils.disable();

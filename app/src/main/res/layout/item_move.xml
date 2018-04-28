@@ -7,7 +7,7 @@
     <xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView
         android:id="@+id/xvideo_view"
         android:layout_width="match_parent"
-        android:layout_height="200dp">
+        android:layout_height="300dp">
 
     </xifuyin.tumour.com.a51ehealth.xvideoview.XVideoView>
 
