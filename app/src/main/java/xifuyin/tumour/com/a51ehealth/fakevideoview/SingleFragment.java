@@ -54,7 +54,7 @@ public class SingleFragment extends Fragment {
     @Override
     public void onResume() {
         super.onResume();
-        XVideoViewManager.getInstance().onResume(getActivity());
+        XVideoViewManager.getInstance().onResume();
     }
 
     @Override

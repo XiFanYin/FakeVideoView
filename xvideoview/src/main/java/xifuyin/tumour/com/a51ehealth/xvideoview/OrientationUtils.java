@@ -14,7 +14,8 @@ import android.view.OrientationEventListener;
 
 public class OrientationUtils {
 
-
+    private Context context;
+    private IXVideoView mVideoPlayer;
     private MyOrientationDetector orientationDetector;
 
     //构造方法
@@ -38,7 +39,9 @@ public class OrientationUtils {
      */
     public void disable() {
         orientationDetector.disable();
-
+        orientationDetector = null;
+        mVideoPlayer = null;
+        context = null;
     }
 
     /**
@@ -46,13 +49,11 @@ public class OrientationUtils {
      */
     public class MyOrientationDetector extends OrientationEventListener {
 
-        private Context context;
-        private IXVideoView mVideoPlayer;
 
         public MyOrientationDetector(Context context, IXVideoView mVideoPlayer) {
             super(context);
-            this.mVideoPlayer = mVideoPlayer;
-            this.context = context;
+            OrientationUtils.this.mVideoPlayer = mVideoPlayer;
+            OrientationUtils.this.context = context;
         }
 
         @Override

@@ -16,6 +16,7 @@ public class XVideoViewManager {
     private OrientationUtils orientationUtils;
 
 
+
     //构造方法
     private XVideoViewManager() {
     }
@@ -49,6 +50,12 @@ public class XVideoViewManager {
             //同时，让新传入的播放器，记录下来
             mVideoPlayer = videoPlayer;
         }
+        //开启重力感应工具类
+        if (orientationUtils != null) {
+            orientationUtils.disable();
+        }
+        orientationUtils = new OrientationUtils(videoPlayer.getContexts(), videoPlayer);
+        orientationUtils.enable();
     }
 
 
@@ -58,7 +65,7 @@ public class XVideoViewManager {
     public void releaseXVideoPlayer() {
         if (mVideoPlayer != null) {
             mVideoPlayer.release();
-            mVideoPlayer=null;
+            mVideoPlayer = null;
         }
     }
 
@@ -80,14 +87,12 @@ public class XVideoViewManager {
     /**
      * 当前界面从新获取焦点
      */
-    public void onResume(Context mContext) {
+    public void onResume() {
         //如果播放器处于暂停状态，，让播放器从新播放视频
         if (mVideoPlayer != null && mVideoPlayer.isPaused()) {
             mVideoPlayer.restart();
         }
-        //开启重力感应工具类
-        orientationUtils = new OrientationUtils(mContext, mVideoPlayer);
-        orientationUtils.enable();
+
     }
 
     /**

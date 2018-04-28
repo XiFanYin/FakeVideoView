@@ -10,6 +10,7 @@ import com.chad.library.adapter.base.BaseViewHolder;
 
 import java.util.ArrayList;
 
+import xifuyin.tumour.com.a51ehealth.xvideoview.OrientationUtils;
 import xifuyin.tumour.com.a51ehealth.xvideoview.XVideoViewManager;
 
 /**
@@ -50,7 +51,7 @@ public class MoreActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        XVideoViewManager.getInstance().onResume(this);
+        XVideoViewManager.getInstance().onResume();
     }
 
     @Override

@@ -1,5 +1,6 @@
 package xifuyin.tumour.com.a51ehealth.xvideoview;
 
+import android.content.Context;
 import android.widget.FrameLayout;
 
 /**
@@ -133,4 +134,6 @@ public interface IXVideoView {
 
     //获取当前视频图层是否已经被锁，如果被锁，重力感应失效
     boolean isLock();
+
+    Context getContexts();
 }

@@ -48,7 +48,7 @@ public class SingleActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        XVideoViewManager.getInstance().onResume(this);
+        XVideoViewManager.getInstance().onResume();
     }
 
     @Override

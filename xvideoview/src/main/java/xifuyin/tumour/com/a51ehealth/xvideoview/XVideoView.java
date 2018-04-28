@@ -653,5 +653,10 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
         return mController.isLock;
     }
 
+    @Override
+    public Context getContexts() {
+        return mContext;
+    }
+
 
 }
