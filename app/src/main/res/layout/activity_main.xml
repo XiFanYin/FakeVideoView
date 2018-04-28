@@ -24,25 +24,11 @@
     <Button
         android:id="@+id/btn3"
         android:layout_width="match_parent"
-        android:text="Activity视频列表，点击进单个播放器去播放"
-        android:layout_height="wrap_content" />
-
-
-    <Button
-        android:id="@+id/btn4"
-        android:layout_width="match_parent"
-        android:text="Fragment视频列表，点击进单个播放器去播放"
-        android:layout_height="wrap_content" />
-
-
-    <Button
-        android:id="@+id/btn5"
-        android:layout_width="match_parent"
         android:text="Activity视频列表中直接去播放"
         android:layout_height="wrap_content" />
 
     <Button
-        android:id="@+id/btn6"
+        android:id="@+id/btn4"
         android:layout_width="match_parent"
         android:text="Fragment视频列表中直接去播放"
         android:layout_height="wrap_content" />

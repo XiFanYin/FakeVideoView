@@ -418,20 +418,31 @@ public class XVideoView extends FrameLayout implements IXVideoView, TextureView.
     //返回视频的总长度
     @Override
     public long getDuration() {
-        return mediaPlayer.getDuration();
+        if (mediaPlayer != null) {
+            return mediaPlayer.getDuration();
+        }
+        return 0;
     }
 
     //返回视频播放的当前进度
     @Override
     public long getCurrentPosition() {
+        if (mediaPlayer != null) {
+            return mediaPlayer.getCurrentPosition();
+        }
 
-        return mediaPlayer.getCurrentPosition();
+        return 0;
+
+
     }
 
     //视频移动到指定位置进行播放
     @Override
     public void seekTo(long touchProgress) {
-        mediaPlayer.seekTo(touchProgress);
+        if (mediaPlayer != null) {
+            mediaPlayer.seekTo(touchProgress);
+        }
+
     }
 
     //获取视频缓存进度

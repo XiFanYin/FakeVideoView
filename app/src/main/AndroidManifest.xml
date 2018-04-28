@@ -31,6 +31,12 @@
         <activity
             android:name=".SingleFragmentActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+
+
+        <activity
+            android:screenOrientation="portrait"
+            android:name=".MoreActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
     </application>
 
 </manifest>

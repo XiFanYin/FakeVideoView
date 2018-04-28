@@ -260,7 +260,9 @@ public class QQBrowserController extends BaseController implements View.OnClickL
 
                 position.setVisibility(VISIBLE);
                 full_screen.setVisibility(VISIBLE);
-                center_start.setVisibility(VISIBLE);
+                if (!xVideoView.isPlaying()) {
+                    center_start.setVisibility(VISIBLE);
+                }
                 back.setVisibility(GONE);
                 title.setVisibility(INVISIBLE);
                 share.setVisibility(GONE);
