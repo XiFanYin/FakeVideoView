@@ -26,6 +26,11 @@
         <activity
             android:name=".SingleActivity"
             android:configChanges="orientation|keyboardHidden|screenSize" />
+
+
+        <activity
+            android:name=".SingleFragmentActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize" />
     </application>
 
 </manifest>

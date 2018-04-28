@@ -22,7 +22,8 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         // 注册广播，监听用户点击了Home键
         registerHomeKeyReceiver();
-        //点击事件
+
+        //单个Activity页面，单个播放器，点击到下一集播放
         findViewById(R.id.btn1).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -31,11 +32,12 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-        //点击事件
+        //单个Fragment页面，单个播放器，点击到下一集播放
         findViewById(R.id.btn2).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                Intent intent = new Intent(MainActivity.this, SingleFragmentActivity.class);
+                startActivity(intent);
             }
         });
         //点击事件
