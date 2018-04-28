@@ -1,5 +1,6 @@
 package xifuyin.tumour.com.a51ehealth.xvideoview;
 
+import android.app.Activity;
 import android.content.Context;
 import android.os.CountDownTimer;
 import android.support.annotation.NonNull;
@@ -51,6 +52,7 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
 
 
     //================================和声音播放位置亮度有关的Ui======================================================
+
     /**
      * @param v
      * @param event
@@ -204,7 +206,6 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     public abstract void onPlayModeChanged(int Mode);
 
 
-
     /**
      * 重置控制器，将控制器恢复到初始状态。在列表时候
      */
@@ -306,10 +307,6 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     abstract void setCenterImageViesible(boolean visible);
 
 
-
-
-
-
     //==============================================和锁显示隐藏有关的定时器=======================================
     ;
 
@@ -350,8 +347,11 @@ public abstract class BaseController extends FrameLayout implements View.OnTouch
     abstract void setLockImageViesible(boolean visible);
 
 
+    public Context getmContext() {
 
+        return mContext;
+    }
 
-
+    ;
 
 }

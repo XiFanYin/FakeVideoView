@@ -29,7 +29,6 @@ public class OrientationUtils {
      * 开启旋转监听
      */
     public void enable() {
-
         orientationDetector.enable();
 
     }
@@ -38,10 +37,14 @@ public class OrientationUtils {
      * 关闭旋转监听
      */
     public void disable() {
-        orientationDetector.disable();
-        orientationDetector = null;
-        mVideoPlayer = null;
-        context = null;
+        if (orientationDetector != null) {
+            orientationDetector.disable();
+            orientationDetector = null;
+            mVideoPlayer = null;
+            context = null;
+        }
+
+
     }
 
     /**

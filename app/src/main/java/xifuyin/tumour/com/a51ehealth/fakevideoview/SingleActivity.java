@@ -20,7 +20,7 @@ public class SingleActivity extends AppCompatActivity {
 
     private XVideoView xvideo_view;
     private String url1 = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
-    String videoUrl = "http://video.699pic.com/videos/65/29/06/DnpVuG3auxjP1519652906.mp4";//播放地址
+    String videoUrl = "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4";//播放地址
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

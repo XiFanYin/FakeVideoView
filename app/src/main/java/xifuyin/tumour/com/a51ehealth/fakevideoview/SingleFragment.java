@@ -19,7 +19,7 @@ import xifuyin.tumour.com.a51ehealth.xvideoview.XVideoViewManager;
 
 public class SingleFragment extends Fragment {
 
-    String videoUrl = "http://video.699pic.com/videos/65/29/06/DnpVuG3auxjP1519652906.mp4";//播放地址
+    String videoUrl = "http://tanzi27niu.cdsb.mobi/wps/wp-content/uploads/2017/05/2017-05-17_17-33-30.mp4";//播放地址
     private String url1 = "rtmp://live.hkstv.hk.lxdns.com/live/hks";
     @Nullable
     @Override
